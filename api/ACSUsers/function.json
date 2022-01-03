@@ -1,0 +1,41 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ],
+      "route": "users/{email}"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "name": "setUser",
+      "type": "cosmosDB",
+      "databaseName": "ACS",
+      "collectionName": "users",
+      "createIfNotExists": true,
+      "partitionKey": "{email}",
+      "connectionStringSetting": "MyAccount_COSMOSDB",
+      "direction": "out"
+    },
+    {
+      "type": "cosmosDB",
+      "name": "getUser",
+      "databaseName": "ACS",
+      "collectionName": "users",
+      "connectionStringSetting": "MyAccount_COSMOSDB",
+      "id" : "{email}",
+      "partitionKey": "{email}",
+      "direction": "in"
+    }
+  ],
+  "scriptFile": "../dist/ACSUsers/index.js"
+}
