@@ -5,13 +5,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
-  <title>Vanilla JavaScript App</title>
+  <title>Azure Communication Services Auth Sample</title>
 </head>
 
 <body>
-  <main>
-    <h1>Vanilla JavaScript App</h1>
-  </main>
+    <main>
+    <h1>Azure Communication Services Auth Sample</h1>
+    <p>Current ACS User ID: <b id="name">...</b></p>
+    <p> <a href="/.auth/login/twitter?post_login_redirect_uri=/">Login with Twitter</a></p>
+    </main>
+
+    <script>
+    const redirect = window.location.pathname;
+
+    async function getUserInfo() {
+      try {
+        const response = await fetch('/.auth/me');
+        const payload = await response.json();
+        const { clientPrincipal } = payload;
+        return clientPrincipal;
+      } catch (error) {
+        console.error('No profile could be found');
+        return undefined;
+      }
+    }
+
+    (async function() {
+      var isAuthenticated = await getUserInfo();
+      if (isAuthenticated) {
+        var test = await fetch(`/api/users/david_rousset@hotmail.com`);
+        var text = await test.text();
+        //const { text } = await( await fetch(`/api/users/david_rousset@hotmail.com`)).text();
+        document.querySelector('#name').textContent = text;
+      }
+      else {
+        document.querySelector('#name').textContent = "Please authenticate";
+      }
+    }())
+    </script>
 </body>
 
 </html>
