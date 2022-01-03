@@ -11,13 +11,14 @@
 <body>
     <main>
     <h1>Azure Communication Services Auth Sample</h1>
-    <p>Current ACS User ID: <b id="name">...</b></p>
+    <p>Current ACS User ID: <b id="acs_user_id">...</b></p>
     <p> <a href="/.auth/login/twitter?post_login_redirect_uri=/">Login with Twitter</a></p>
+    <p> <a href="/.auth/login/aad?post_login_redirect_uri=/">Login with Azure Active Directory</a></p>
+    <p> <a href="/.auth/login/github?post_login_redirect_uri=/">Login with Github</a></p>
     </main>
 
     <script>
-    const redirect = window.location.pathname;
-
+    // Simple function to check if the user has logged in or not yet
     async function getUserInfo() {
       try {
         const response = await fetch('/.auth/me');
@@ -31,16 +32,25 @@
     }
 
     (async function() {
-      var isAuthenticated = await getUserInfo();
-      if (isAuthenticated) {
-        var test = await fetch(`/api/users/david_rousset@hotmail.com`);
-        var text = await test.text();
-        //const { text } = await( await fetch(`/api/users/david_rousset@hotmail.com`)).text();
-        document.querySelector('#name').textContent = text;
+      var authenticatedUser = await getUserInfo();
+      var userKey = "";
+      var ACSUserID = "Please authenticate";
+
+      // We can only call the API to get an ACS User ID if we've been authenticated
+      if (authenticatedUser) {
+        // If MS provider, we'll get the email address to be used as the key for the DB
+        if (authenticatedUser.identityProvider == "aad") {
+          userKey=authenticatedUser.userDetails;
+        }
+        // Otherwise, let's build keys as "davrous@twitter" or "davrous@github"
+        else {
+          userKey=authenticatedUser.userDetails + "@" + authenticatedUser.identityProvider;
+        }
+        var ACSUser = await fetch(`/api/users/`+ userKey);
+        var ACSUserID = await ACSUser.text();
       }
-      else {
-        document.querySelector('#name').textContent = "Please authenticate";
-      }
+
+      document.querySelector('#acs_user_id').textContent = ACSUserID;
     }())
     </script>
 </body>
