@@ -1,5 +1,5 @@
+import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { getUserInfo, isAuthenticated} from "@aaronpowell/static-web-apps-api-auth";
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { CommunicationIdentityClient } from "@azure/communication-identity";
 import { CommunicationUserIdentifier, AzureCommunicationTokenCredential } from '@azure/communication-common'
 
