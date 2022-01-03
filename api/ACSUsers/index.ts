@@ -3,7 +3,14 @@ import { getUserInfo, isAuthenticated} from "@aaronpowell/static-web-apps-api-au
 import { CommunicationIdentityClient } from "@azure/communication-identity";
 import { CommunicationUserIdentifier, AzureCommunicationTokenCredential } from '@azure/communication-common'
 
-const connectionString = 'endpoint=https://davrousacs.communication.azure.com/;accesskey=sFTj82FWbxGBmgtYWf/o4BYgYsQaWPtPRX1IpqFLpMaSlzOXdDmLZr1K4m31JFxABfrINGCX0sTcZlENm9efQA==';
+// TODO: 
+// To make this sample work, you need to create an Azure Communication Services in the Azure Portal
+// And create a Cosmos DB named 'ACS' with a table named 'users'
+//
+// Then, create those env variables (or update them for local testing in local.settings.json)
+// - ACS_ConnectionString: pointing to your ACS connection string found in your Azure Portal
+// - MyAccount_COSMOSDB: pointing to your Cosmos DB connection string found in your Azure Portal
+var connectionString = "";
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
@@ -11,12 +18,15 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     let user;
     let userToken;
 
-    if (!isAuthenticated(req)) {
+    // Only authenticated users can call this API
+    if (!isAuthenticated(req) && process.env["ACS_ConnectionString"]) {
         context.res = {
             body: "You are not logged in at the moment"
         };
     } else {
-        var authuser = getUserInfo(req);
+        if (process.env["ACS_ConnectionString"]) {
+            connectionString = process.env["ACS_ConnectionString"];
+        }
 
         // If the user has already been created, let's check the token validity
         if (context.bindings.getUser) {
