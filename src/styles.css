@@ -59,6 +59,9 @@ input {
 .aadButton {
   background-image: url("microsoft-icon.svg");
 }
+.googleButton {
+  background-image: url("google-icon.svg");
+}
 .githubButton {
   background-image: url("github-icon.svg");
 }
@@ -74,4 +77,9 @@ input {
 }
 #acsVideoZone {
   display: none;
+}
+
+#remoteVideoContainer {
+  display: flex;
+  flex-direction: column;
 }

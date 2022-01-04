@@ -32,6 +32,7 @@ let remoteVideoContainer = document.getElementById('remoteVideoContainer');
 let localVideoContainer = document.getElementById('localVideoContainer');
 let twitterLoginButton = document.getElementsByClassName('twitterButton')[0];
 let aadLoginButton = document.getElementsByClassName('aadButton')[0];
+let googleLoginButton = document.getElementsByClassName('googleButton')[0];
 let githubLoginButton = document.getElementsByClassName('githubButton')[0];
 let logoutButton = document.getElementsByClassName('logoutButton')[0];
 let meetingLinkInput = document.getElementById('teams-link-input');
@@ -74,6 +75,7 @@ async function getUserAcsId(userEmail) {
     registerLoginRouter(twitterLoginButton, "twitter");
     registerLoginRouter(aadLoginButton, "aad");
     registerLoginRouter(githubLoginButton, "github");
+    registerLoginRouter(googleLoginButton, "google");
 
     logoutButton.addEventListener("click", () => {
         window.location.href="/.auth/logout";
@@ -84,7 +86,7 @@ async function getUserAcsId(userEmail) {
     // We can  call the API to get an ACS User ID only if we've been authenticated
     if (authenticatedUser) {
         // If MS provider, we'll get the email address to be used as the key for the DB
-        if (authenticatedUser.identityProvider == "aad") {
+        if (authenticatedUser.identityProvider == "aad" || authenticatedUser.identityProvider == "google") {
             authUserEmail=authenticatedUser.userDetails;
         }
         // Otherwise, let's build keys as "davrous@twitter" or "davrous@github"
