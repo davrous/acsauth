@@ -112,13 +112,10 @@ let hangUpCallButton = document.getElementById('hangup-call-button');
 let acceptCallButton = document.getElementById('accept-call-button');
 let startVideoButton = document.getElementById('start-video-button');
 let stopVideoButton = document.getElementById('stop-video-button');
-let connectedLabel = document.getElementById('connectedLabel');
 let remoteVideoContainer = document.getElementById('remoteVideoContainer');
 let localVideoContainer = document.getElementById('localVideoContainer');
 
 const meetingLinkInput = document.getElementById('teams-link-input');
-const hangUpButton = document.getElementById('hang-up-button');
-const teamsMeetingJoinButton = document.getElementById('join-meeting-button');
 const callStateElement = document.getElementById('call-state');
 const recordingStateElement = document.getElementById('recording-state');
 
@@ -174,18 +171,6 @@ startCallButton.onclick = async () => {
             })
 
             subscribeToCall(call);
-
-            // call.api(Features.Recording).on('isRecordingActiveChanged', () => {
-            //     if (call.api(Features.Recording).isRecordingActive) {
-            //         recordingStateElement.innerText = "This call is being recorded";
-            //     }
-            //     else {
-            //         recordingStateElement.innerText = "";
-            //     }
-            // });
-            // toggle button states
-            hangUpButton.disabled = false;
-            teamsMeetingJoinButton.disabled = true;
         }
         else {
             let AcsUserId = await getUserAcsId(calleeAcsUserId.value.trim());
@@ -237,15 +222,14 @@ subscribeToCall = (call) => {
         // Subscribe to call's 'stateChanged' event for value changes.
         call.on('stateChanged', async () => {
             console.log(`Call state changed: ${call.state}`);
-            if(call.state === 'Connected') {
-                connectedLabel.hidden = false;
+            callStateElement.innerText = call.state;
+            if(call.state === 'Connected' || call.state === 'InLobby') {
                 acceptCallButton.disabled = true;
                 startCallButton.disabled = true;
                 hangUpCallButton.disabled = false;
                 startVideoButton.disabled = false;
                 stopVideoButton.disabled = false;
             } else if (call.state === 'Disconnected') {
-                connectedLabel.hidden = true;
                 startCallButton.disabled = false;
                 hangUpCallButton.disabled = true;
                 startVideoButton.disabled = true;
@@ -423,35 +407,5 @@ removeLocalVideoStream = async() => {
 hangUpCallButton.addEventListener("click", async () => {
     // end the current call
     await call.hangUp();
-});
-
-hangUpButton.addEventListener("click", async () => {
-    // end the current call
-    await call.hangUp();
-  
-    // toggle button states
-    hangUpButton.disabled = true;
-    teamsMeetingJoinButton.disabled = false;
     callStateElement.innerText = '-';
-  });
-
-teamsMeetingJoinButton.addEventListener("click", () => {    
-    // join with meeting link
-    call = callAgent.join({meetingLink: meetingLinkInput.value}, {});
-    
-    call.on('stateChanged', () => {
-        callStateElement.innerText = call.state;
-    })
-
-    // call.api(Features.Recording).on('isRecordingActiveChanged', () => {
-    //     if (call.api(Features.Recording).isRecordingActive) {
-    //         recordingStateElement.innerText = "This call is being recorded";
-    //     }
-    //     else {
-    //         recordingStateElement.innerText = "";
-    //     }
-    // });
-    // toggle button states
-    hangUpButton.disabled = false;
-    teamsMeetingJoinButton.disabled = true;
 });

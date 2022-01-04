@@ -6,37 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
   <title>Azure Communication Services Auth Sample</title>
-  <style>
-    .loginButton {
-      width: 40px;
-      height: 40px;
-      border: none;
-      background-repeat: no-repeat;
-      background-size: contain;
-      margin: 5px;
-    }
-    .twitterButton {
-      background-image: url("twitter-icon.svg");
-    }
-    .aadButton {
-      background-image: url("microsoft-icon.svg");
-    }
-    .githubButton {
-      background-image: url("github-icon.svg");
-    }
-    #loginZone {
-      display: none;
-    }
-    #logoutZone {
-      display: none;
-    }
-    #acsZone {
-      display: none;
-    }
-    #acsVideoZone {
-      display: none;
-    }
-  </style>
 </head>
 
 <body>
@@ -61,36 +30,26 @@
           <br>
           <input id="callee-acs-user-id"
               type="text"
-              placeholder="Enter callee's user email format: 'user@github, user@twitter or MS email'"
-              style="margin-bottom:1em; width: 500px; display: block;"/>
-          <button id="start-call-button" type="button" disabled="true">Start Call</button>
-          <button id="hangup-call-button" type="button" disabled="true">Hang up Call</button>
-          <button id="accept-call-button" type="button" disabled="true">Accept Call</button>
-          <button id="start-video-button" type="button" disabled="true">Start Video</button>
-          <button id="stop-video-button" type="button" disabled="true">Stop Video</button>
-          <br>
-          <br>
-          <div id="connectedLabel" style="color: #13bb13;" hidden>Call is connected!</div>
-          <br>
-          <div id="remoteVideoContainer" style="width: 40%;" hidden>Remote participants' video streams:</div>
-          <br>
-          <div id="localVideoContainer" style="width: 30%;" hidden>Local video stream:</div>
-        /<div>
-        <div id="teamsVideoZone">
-          <h3>Teams meeting join quickstart</h3>
-          <input id="teams-link-input" type="text" placeholder="Teams meeting link"
-              style="margin-bottom:1em; width: 300px;" />
-              <p>Call state <span style="font-weight: bold" id="call-state">-</span></p>
-              <p><span style="font-weight: bold" id="recording-state"></span></p>
-          <div>
-              <button id="join-meeting-button" type="button" disabled="false">
-                  Join Teams Meeting
-              </button>
-              <button id="hang-up-button" type="button" disabled="true">
-                  Hang Up
-              </button>
+              placeholder="Enter callee's user email format: 'user@github, user@twitter or MS email'" />
+          <input id="teams-link-input" type="text" placeholder="Teams meeting link" />
+            <p>Call state <span style="font-weight: bold" id="call-state">-</span></p>
+            <p><span style="font-weight: bold" id="recording-state"></span></p>
+
+          <div id="buttonsZone">
+            <button id="start-call-button" type="button" disabled="true">Start Call</button>
+            <button id="hangup-call-button" type="button" disabled="true">Hang up Call</button>
+            <button id="accept-call-button" type="button" disabled="true">Accept Call</button>
+            <button id="start-video-button" type="button" disabled="true">Start Video</button>
+            <button id="stop-video-button" type="button" disabled="true">Stop Video</button>
           </div>
-        </div>
+          <br>
+          <br>
+
+          <div id="videosZone">
+            <div id="remoteVideoContainer" hidden>Remote participants' video streams:</div>
+            <div id="localVideoContainer" hidden>Local video stream:</div>
+           </div>
+        <div>
       </div>
     </main>
 
