@@ -9,7 +9,7 @@
         "get",
         "post"
       ],
-      "route": "acsusers/{email}"
+      "route": "acsusers/{email}/{lookup:bool?}"
     },
     {
       "type": "http",
