@@ -17,6 +17,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     let userId;
     let user;
     let userToken;
+    let acsToken;
 
     // Only authenticated users can call this API
     if (!isAuthenticated(req) && process.env["ACS_ConnectionString"]) {
@@ -46,6 +47,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                 });
             }
             userId = context.bindings.getUser.userId;
+            acsToken = context.bindings.getUser.userToken;
             context.log('User: ' + context.bindings.getUser);
         }
         // Creating a new ACS identity based on the email provided
@@ -56,6 +58,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             
             // This is the GUID used by ACS to identity a user
             userId = user.communicationUserId;
+            acsToken = userToken.token;
 
             context.bindings.setUser = JSON.stringify({
                 id: context.bindingData.email,
@@ -65,8 +68,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             });
         }
 
+        var returnJSON = {
+            userId: userId,
+            userToken: acsToken
+        }
+
         context.res = {
-            body: userId
+            body: JSON.stringify(returnJSON)
         };
     }
 

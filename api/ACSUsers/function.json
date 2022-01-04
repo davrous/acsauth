@@ -9,7 +9,7 @@
         "get",
         "post"
       ],
-      "route": "users/{email}"
+      "route": "acsusers/{email}"
     },
     {
       "type": "http",
@@ -37,5 +37,5 @@
       "direction": "in"
     }
   ],
-  "scriptFile": "../dist/ACSUsers/index.js"
+  "scriptFile": "../dist/acsusers/index.js"
 }
