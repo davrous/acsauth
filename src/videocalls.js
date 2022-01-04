@@ -164,24 +164,21 @@ startCallButton.onclick = async () => {
         if (meetingLink !== "") {
             // join with meeting link
             call = callAgent.join({meetingLink: meetingLink}, { videoOptions });
-            
-            call.on('stateChanged', () => {
-                callStateElement.innerText = call.state;
-            })
-
-            subscribeToCall(call);
         }
         else {
+            // Converting email address to internal ACS User Id
             let AcsUserId = await getUserAcsId(calleeAcsUserId.value.trim());
             if (AcsUserId) {
-                call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });
-                // Subscribe to the call's properties and events.
-                subscribeToCall(call);
+                call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });  
             }
             else {
                 console.warn("No ACS User Id found.");
             }
-        }   
+        }
+        // Subscribe to the call's properties and events.
+        if (call) {
+            subscribeToCall(call);
+        }
     } catch (error) {
         console.error(error);
     }
