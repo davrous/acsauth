@@ -1,9 +1,11 @@
 // Make sure to install the necessary dependencies
 const { CallClient, VideoStreamRenderer, LocalVideoStream } = require('@azure/communication-calling');
+const { Features } = require('@azure/communication-calling');
 const { AzureCommunicationTokenCredential } = require('@azure/communication-common');
 const { AzureLogger, setLogLevel } = require("@azure/logger");
 // Set the log level and output
-setLogLevel('verbose');
+// verbose, info, warning, error
+setLogLevel('error');
 AzureLogger.log = (...args) => {
     console.log(...args);
 };
@@ -27,6 +29,7 @@ logoutButton.addEventListener("click", () => {
 });
 
 let ACSUser;
+let userKey = "";
 
 // Simple function to check if the user has logged in or not yet
 async function getUserInfo() {
@@ -56,8 +59,7 @@ async function getUserAcsId(userEmail) {
 
 (async function() {
     var authenticatedUser = await getUserInfo();
-    var userKey = "";
-
+    
     // We can only call the API to get an ACS User ID if we've been authenticated
     if (authenticatedUser) {
         // If MS provider, we'll get the email address to be used as the key for the DB
@@ -80,6 +82,8 @@ async function getUserAcsId(userEmail) {
             await initializeCallAgent();
             document.querySelector('#initialize-call-agent').style.display = "none";
             document.querySelector('#acsVideoZone').style.display = "initial";
+            teamsMeetingJoinButton.disabled = false;
+            callStateElement.innerText = '-';
         }
         catch (error) {
             document.querySelector('#initialize-call-agent').textContent = "Error while initializing agent, please check if the token is valid.";
@@ -112,6 +116,12 @@ let connectedLabel = document.getElementById('connectedLabel');
 let remoteVideoContainer = document.getElementById('remoteVideoContainer');
 let localVideoContainer = document.getElementById('localVideoContainer');
 
+const meetingLinkInput = document.getElementById('teams-link-input');
+const hangUpButton = document.getElementById('hang-up-button');
+const teamsMeetingJoinButton = document.getElementById('join-meeting-button');
+const callStateElement = document.getElementById('call-state');
+const recordingStateElement = document.getElementById('recording-state');
+
 /**
  * Using the CallClient, initialize a CallAgent instance with a CommunicationUserCredential which will enable us to make outgoing calls and receive incoming calls. 
  * You can then use the CallClient.getDeviceManager() API instance to get the DeviceManager.
@@ -120,7 +130,7 @@ async function initializeCallAgent() {
     try {
         const callClient = new CallClient(); 
         tokenCredential = new AzureCommunicationTokenCredential(ACSUser.userToken);
-        callAgent = await callClient.createCallAgent(tokenCredential)
+        callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACS:' + userKey})
         // Set up a camera device to use.
         deviceManager = await callClient.getDeviceManager();
         await deviceManager.askDevicePermission({ video: true });
@@ -154,15 +164,40 @@ startCallButton.onclick = async () => {
     try {
         const localVideoStream = await createLocalVideoStream();
         const videoOptions = localVideoStream ? { localVideoStreams: [localVideoStream] } : undefined;
-        let AcsUserId = await getUserAcsId(calleeAcsUserId.value.trim());
-        if (AcsUserId) {
-            call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });
-            // Subscribe to the call's properties and events.
+        let meetingLink = meetingLinkInput.value.trim();
+        if (meetingLink !== "") {
+            // join with meeting link
+            call = callAgent.join({meetingLink: meetingLink}, { videoOptions });
+            
+            call.on('stateChanged', () => {
+                callStateElement.innerText = call.state;
+            })
+
             subscribeToCall(call);
+
+            // call.api(Features.Recording).on('isRecordingActiveChanged', () => {
+            //     if (call.api(Features.Recording).isRecordingActive) {
+            //         recordingStateElement.innerText = "This call is being recorded";
+            //     }
+            //     else {
+            //         recordingStateElement.innerText = "";
+            //     }
+            // });
+            // toggle button states
+            hangUpButton.disabled = false;
+            teamsMeetingJoinButton.disabled = true;
         }
         else {
-            console.warn("No ACS User Id found.");
-        }
+            let AcsUserId = await getUserAcsId(calleeAcsUserId.value.trim());
+            if (AcsUserId) {
+                call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });
+                // Subscribe to the call's properties and events.
+                subscribeToCall(call);
+            }
+            else {
+                console.warn("No ACS User Id found.");
+            }
+        }   
     } catch (error) {
         console.error(error);
     }
@@ -388,4 +423,35 @@ removeLocalVideoStream = async() => {
 hangUpCallButton.addEventListener("click", async () => {
     // end the current call
     await call.hangUp();
+});
+
+hangUpButton.addEventListener("click", async () => {
+    // end the current call
+    await call.hangUp();
+  
+    // toggle button states
+    hangUpButton.disabled = true;
+    teamsMeetingJoinButton.disabled = false;
+    callStateElement.innerText = '-';
+  });
+
+teamsMeetingJoinButton.addEventListener("click", () => {    
+    // join with meeting link
+    call = callAgent.join({meetingLink: meetingLinkInput.value}, {});
+    
+    call.on('stateChanged', () => {
+        callStateElement.innerText = call.state;
+    })
+
+    // call.api(Features.Recording).on('isRecordingActiveChanged', () => {
+    //     if (call.api(Features.Recording).isRecordingActive) {
+    //         recordingStateElement.innerText = "This call is being recorded";
+    //     }
+    //     else {
+    //         recordingStateElement.innerText = "";
+    //     }
+    // });
+    // toggle button states
+    hangUpButton.disabled = false;
+    teamsMeetingJoinButton.disabled = true;
 });
