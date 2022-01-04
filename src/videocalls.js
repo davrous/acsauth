@@ -44,7 +44,7 @@ async function getUserInfo() {
 async function getUserAcsId(userEmail) {
     try {
         // Calling the API to just try to resolve an email with an existing ACS User ID created
-        const response = await fetch('/api/acsusers/' + userEmail + '/true');
+        const response = await fetch('/api/users/' + userEmail + '/true');
         const payload = await response.json();
         const { userId } = payload;
         return userId;
@@ -68,7 +68,7 @@ async function getUserAcsId(userEmail) {
         else {
         userKey=authenticatedUser.userDetails + "@" + authenticatedUser.identityProvider;
         }
-        var ACSUserQuery = await fetch(`/api/acsusers/`+ userKey);
+        var ACSUserQuery = await fetch(`/api/users/`+ userKey);
         ACSUser = await ACSUserQuery.json();
         console.log(ACSUser.userId);
         document.querySelector('#acs_user_id').textContent = ACSUser.userId;
