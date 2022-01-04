@@ -18,6 +18,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     let user;
     let userToken;
     let acsToken;
+    let tokenExpiresOn;
     let returnJSON;
 
     // API is called only to try to resolved an email for an ACS User ID
@@ -50,48 +51,38 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                 connectionString = process.env["ACS_ConnectionString"];
             }
 
-            // If the user has already been created, let's check the token validity
-            if (context.bindings.getUser) {
-                let expiresOn = context.bindings.getUser.expiresOn;
-                let expiresOnDate = new Date(expiresOn);
-                let currentDate = new Date();
-                if (currentDate > expiresOnDate) {
-                    // Token has expired, we need to refresh it
-                    let tokenClient = new CommunicationIdentityClient(connectionString);
-                    user = new AzureCommunicationTokenCredential(context.bindings.getUser.userToken);
-                    userToken = await user.getToken();
-                    context.bindings.setUser = JSON.stringify({
-                        id: context.bindingData.email,
-                        userToken: userToken.token,
-                        expiresOn: new Date(userToken.expiresOnTimestamp),
-                        userId: context.bindings.getUser.userId
-                    });
-                }
+            let currentDate = new Date();
+
+            // If the user has already been created & the token is still valid
+            if (context.bindings.getUser && new Date(context.bindings.getUser.expiresOn) > currentDate) {
+                tokenExpiresOn = context.bindings.getUser.expiresOn;
                 userId = context.bindings.getUser.userId;
                 acsToken = context.bindings.getUser.userToken;
-                context.log('User: ' + context.bindings.getUser);
             }
+            // User not found yet or token has expired, we need to refresh it
             // Creating a new ACS identity based on the email provided
             else {
                 let tokenClient = new CommunicationIdentityClient(connectionString);
                 user = await tokenClient.createUser();
-                userToken = await tokenClient.getToken(user, ["voip"]);
+                userToken = await tokenClient.getToken(user, ["voip", "chat"]);
                 
                 // This is the GUID used by ACS to identity a user
                 userId = user.communicationUserId;
                 acsToken = userToken.token;
+                tokenExpiresOn = userToken.expiresOn;
 
                 context.bindings.setUser = JSON.stringify({
                     id: context.bindingData.email,
-                    userToken: userToken.token,
-                    expiresOn: userToken.expiresOn,
-                    userId: user.communicationUserId
+                    userToken: acsToken,
+                    expiresOn: tokenExpiresOn,
+                    userId: userId
                 });
             }
 
             returnJSON = {
                 userId: userId,
-                userToken: acsToken
+                userToken: acsToken,
+                expiresOn: tokenExpiresOn
             }
 
             context.res = {

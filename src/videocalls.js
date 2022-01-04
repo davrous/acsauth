@@ -10,26 +10,33 @@ AzureLogger.log = (...args) => {
     console.log(...args);
 };
 
+// Calling web sdk objects
+let callAgent;
+let deviceManager;
+let call;
+let incomingCall;
+let localVideoStream;
+let localVideoStreamRenderer;
+// json ACS user object return by /api/users/{email}
+let ACSUser;
+let authUserEmail = "";
+
+// UI widgets
+let calleeAcsUserId = document.getElementById('callee-acs-user-id');
+let startCallButton = document.getElementById('start-call-button');
+let hangUpCallButton = document.getElementById('hangup-call-button');
+let acceptCallButton = document.getElementById('accept-call-button');
+let startVideoButton = document.getElementById('start-video-button');
+let stopVideoButton = document.getElementById('stop-video-button');
+let remoteVideoContainer = document.getElementById('remoteVideoContainer');
+let localVideoContainer = document.getElementById('localVideoContainer');
 let twitterLoginButton = document.getElementsByClassName('twitterButton')[0];
 let aadLoginButton = document.getElementsByClassName('aadButton')[0];
 let githubLoginButton = document.getElementsByClassName('githubButton')[0];
 let logoutButton = document.getElementsByClassName('logoutButton')[0];
-registerLoginRouter(twitterLoginButton, "twitter");
-registerLoginRouter(aadLoginButton, "aad");
-registerLoginRouter(githubLoginButton, "github");
-
-function registerLoginRouter(button, provider) {
-  button.addEventListener("click", () => { 
-    window.location.href="/.auth/login/" + provider + "?post_login_redirect_uri=/";
-  });
-}
-
-logoutButton.addEventListener("click", () => {
-    window.location.href="/.auth/logout";
-});
-
-let ACSUser;
-let userKey = "";
+let meetingLinkInput = document.getElementById('teams-link-input');
+let callStateElement = document.getElementById('call-state');
+let recordingStateElement = document.getElementById('recording-state');
 
 // Simple function to check if the user has logged in or not yet
 async function getUserInfo() {
@@ -58,31 +65,45 @@ async function getUserAcsId(userEmail) {
 }
 
 (async function() {
+    function registerLoginRouter(button, provider) {
+        button.addEventListener("click", () => { 
+          window.location.href="/.auth/login/" + provider + "?post_login_redirect_uri=/";
+        });
+    }
+
+    registerLoginRouter(twitterLoginButton, "twitter");
+    registerLoginRouter(aadLoginButton, "aad");
+    registerLoginRouter(githubLoginButton, "github");
+
+    logoutButton.addEventListener("click", () => {
+        window.location.href="/.auth/logout";
+    });
+
     var authenticatedUser = await getUserInfo();
     
-    // We can only call the API to get an ACS User ID if we've been authenticated
+    // We can  call the API to get an ACS User ID only if we've been authenticated
     if (authenticatedUser) {
         // If MS provider, we'll get the email address to be used as the key for the DB
         if (authenticatedUser.identityProvider == "aad") {
-        userKey=authenticatedUser.userDetails;
+            authUserEmail=authenticatedUser.userDetails;
         }
         // Otherwise, let's build keys as "davrous@twitter" or "davrous@github"
         else {
-        userKey=authenticatedUser.userDetails + "@" + authenticatedUser.identityProvider;
+            authUserEmail=authenticatedUser.userDetails + "@" + authenticatedUser.identityProvider;
         }
-        var ACSUserQuery = await fetch(`/api/users/`+ userKey);
+        var ACSUserQuery = await fetch(`/api/users/`+ authUserEmail);
         ACSUser = await ACSUserQuery.json();
-        console.log(ACSUser.userId);
+        console.log("ACS User Token: " + ACSUser.userToken);
+        console.log("Valid until: " + ACSUser.expiresOn);
         document.querySelector('#acs_user_id').textContent = ACSUser.userId;
-        document.querySelector('#user_email').textContent = userKey;
+        document.querySelector('#user_email').textContent = authUserEmail;
         document.querySelector('#loginZone').style.display = "none";
-        document.querySelector('#logoutZone').style.display = "initial";
+        document.querySelector('#logoutZone').style.display = "block";
         document.querySelector('#acsZone').style.display = "initial";
         try {
             await initializeCallAgent();
             document.querySelector('#initialize-call-agent').style.display = "none";
             document.querySelector('#acsVideoZone').style.display = "initial";
-            teamsMeetingJoinButton.disabled = false;
             callStateElement.innerText = '-';
         }
         catch (error) {
@@ -97,28 +118,6 @@ async function getUserAcsId(userEmail) {
     }
 }())
 
-// Calling web sdk objects
-let callAgent;
-let deviceManager;
-let call;
-let incomingCall;
-let localVideoStream;
-let localVideoStreamRenderer;
-
-// UI widgets
-let calleeAcsUserId = document.getElementById('callee-acs-user-id');
-let startCallButton = document.getElementById('start-call-button');
-let hangUpCallButton = document.getElementById('hangup-call-button');
-let acceptCallButton = document.getElementById('accept-call-button');
-let startVideoButton = document.getElementById('start-video-button');
-let stopVideoButton = document.getElementById('stop-video-button');
-let remoteVideoContainer = document.getElementById('remoteVideoContainer');
-let localVideoContainer = document.getElementById('localVideoContainer');
-
-const meetingLinkInput = document.getElementById('teams-link-input');
-const callStateElement = document.getElementById('call-state');
-const recordingStateElement = document.getElementById('recording-state');
-
 /**
  * Using the CallClient, initialize a CallAgent instance with a CommunicationUserCredential which will enable us to make outgoing calls and receive incoming calls. 
  * You can then use the CallClient.getDeviceManager() API instance to get the DeviceManager.
@@ -127,7 +126,7 @@ async function initializeCallAgent() {
     try {
         const callClient = new CallClient(); 
         tokenCredential = new AzureCommunicationTokenCredential(ACSUser.userToken);
-        callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACS:' + userKey})
+        callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACS:' + authUserEmail})
         // Set up a camera device to use.
         deviceManager = await callClient.getDeviceManager();
         await deviceManager.askDevicePermission({ video: true });
