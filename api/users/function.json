@@ -37,5 +37,5 @@
       "direction": "in"
     }
   ],
-  "scriptFile": "../dist/acsusers/index.js"
+  "scriptFile": "../dist/users/index.js"
 }
