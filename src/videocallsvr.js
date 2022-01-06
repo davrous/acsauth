@@ -424,12 +424,12 @@ function makeVideoButton(videoElement) {
         sideOrientation: BABYLON.Mesh.DOUBLESIDE
     };
 
-    var videoPlane = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);
+    videoPlane = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);
     var vidPos = (new BABYLON.Vector3(0.0,0.12,-0.05));
     var vidRot = (new BABYLON.Vector3(0,Math.PI,0));
     videoPlane.position = vidPos;
     videoPlane.rotation = vidRot;
-    
+
     var videoPlaneMat = new BABYLON.StandardMaterial("m", scene);
     var videoTexture = new BABYLON.VideoTexture("vidtex",videoElement, scene);
     videoPlaneMat.diffuseTexture = videoTexture;
@@ -439,6 +439,7 @@ function makeVideoButton(videoElement) {
 }
 
 let controllerMesh;
+let videoPlane;
 
 // Babylon.js WebGL code. Creating the scene, loading the helmet mesh.
 // Activating the render loop with an auto animated camera.
