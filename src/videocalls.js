@@ -1,7 +1,7 @@
 // Make sure to install the necessary dependencies
 const { CallClient, VideoStreamRenderer, LocalVideoStream } = require('@azure/communication-calling');
-const { Features } = require('@azure/communication-calling');
 const { AzureCommunicationTokenCredential } = require('@azure/communication-common');
+
 const { AzureLogger, setLogLevel } = require("@azure/logger");
 // Set the log level and output
 // verbose, info, warning, error

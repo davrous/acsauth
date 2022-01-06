@@ -83,3 +83,8 @@ input {
   display: flex;
   flex-direction: column;
 }
+
+/* canvas {
+  width: 640px;
+  height: 480px;
+} */

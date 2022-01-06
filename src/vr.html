@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Azure Communication Services Auth VR Sample</title>
+    <!-- Babylon.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/ammo.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+</head>
+
+<body>
+    <main>
+      <h1>Azure Communication Services Auth Sample</h1>
+      <p>Current User email: <b id="user_email">...</b></p>
+      <div id="loginZone">
+        <p>Please choose an authentication provider:</p>
+        <button class="loginButton twitterButton" title="Login with your Twitter account" />
+        <button class="loginButton aadButton" title="Login with your Microsoft account"/>
+        <button class="loginButton googleButton" title="Login with your Google account"/>
+        <button class="loginButton githubButton" title="Login with your Github account"/>
+      </div>
+      <div id="logoutZone">
+        <p>Current ACS User ID: <b id="acs_user_id">...</b></p>
+        <button class="logoutButton" title="Logout">Logout</button>
+      </div>
+
+      <div id="acsZone">
+        <span id="initialize-call-agent">Initializing call agent...</span>
+        <div id="acsVideoZone">
+          <input id="callee-acs-user-id"
+              type="text"
+              placeholder="Enter callee's user email format: 'user@github, user@twitter or MS email'" />
+          <input id="teams-link-input" type="text" placeholder="Teams meeting link" />
+            <p>Call state <span style="font-weight: bold" id="call-state">-</span></p>
+            <p><span style="font-weight: bold" id="recording-state"></span></p>
+
+          <div id="buttonsZone">
+            <button id="start-call-button" type="button" disabled="true">Start Call</button>
+            <button id="hangup-call-button" type="button" disabled="true">Hang up Call</button>
+            <button id="accept-call-button" type="button" disabled="true">Accept Call</button>
+            <button id="start-video-button" type="button" disabled="true">Start Video</button>
+            <button id="stop-video-button" type="button" disabled="true">Stop Video</button>
+          </div>
+          <div id="videosZone">
+            <div id="remoteVideoContainer" hidden>Remote participants' video streams:</div>
+            <div id="localVideoContainer" hidden>Local video stream:</div>
+           </div>
+        <div>
+      </div>
+      <canvas width="1024px" height="600px" id="renderCanvas"></canvas>
+    </main>
+
+    <script src="./bundlevr.js"></script>
+</body>
+
+</html>
