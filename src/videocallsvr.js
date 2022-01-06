@@ -419,41 +419,58 @@ hangUpCallButton.addEventListener("click", async () => {
 
 function makeVideoButton(videoElement) {
     var planeOpts = {
-            height: videoElement.videoHeight / 500, 
-            width: videoElement.videoWidth / 500, 
-            sideOrientation: BABYLON.Mesh.DOUBLESIDE
+        height: 0.09, 
+        width: 0.16, 
+        sideOrientation: BABYLON.Mesh.DOUBLESIDE
     };
+
     var videoPlane = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);
-    var vidPos = (new BABYLON.Vector3(1.5,0,0.1))
+    var vidPos = (new BABYLON.Vector3(0.0,0.12,-0.05));
+    var vidRot = (new BABYLON.Vector3(0,Math.PI,0));
     videoPlane.position = vidPos;
+    videoPlane.rotation = vidRot;
+    
     var videoPlaneMat = new BABYLON.StandardMaterial("m", scene);
     var videoTexture = new BABYLON.VideoTexture("vidtex",videoElement, scene);
     videoPlaneMat.diffuseTexture = videoTexture;
     videoPlaneMat.roughness = 1;
     videoPlaneMat.emissiveColor = new BABYLON.Color3.White();
     videoPlane.material = videoPlaneMat;
-    // var pushButton = new BABYLON.GUI.MeshButton3D(videoPlane, "video");
-    // panel.addControl(pushButton);
 }
+
+let controllerMesh;
 
 // Babylon.js WebGL code. Creating the scene, loading the helmet mesh.
 // Activating the render loop with an auto animated camera.
 let createScene = function() {
-    scene = new BABYLON.Scene(engine);
-    scene.createDefaultCameraOrLight(true, true, true);
-    // Load the model
-    BABYLON.SceneLoader.Append(
-      "https://www.babylonjs.com/Assets/DamagedHelmet/glTF/",
-      "DamagedHelmet.gltf",
-      scene,
-      function(meshes) {
-        scene.createDefaultCameraOrLight(true, true, true);
-        scene.activeCamera.useAutoRotationBehavior = true;
-        scene.activeCamera.autoRotationBehavior.idleRotationSpeed = 0.2;
-        var helper = scene.createDefaultEnvironment();
-      }
-    );
-  
+    // Playground needs to return at least an empty scene and default camera
+    var scene = new BABYLON.Scene(engine);
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+    // Async call
+    BABYLON.SceneLoader.Append("https://www.babylonjs.com/Scenes/Espilit/",
+        "Espilit.babylon", scene, async function () {
+           var xr = await scene.createDefaultXRExperienceAsync({floorMeshes: [scene.getMeshByName("Sols")]});
+
+           // Add controllers to shadow.
+            xr.input.onControllerAddedObservable.add((controller) => {
+                
+                if (controller.onMeshLoadedObservable) {
+                    controller.onMeshLoadedObservable.addOnce((rootMesh) => {
+                        controllerMesh = rootMesh;
+                        videoPlane.parent = controllerMesh;
+                    });
+                } else {
+                    controller.onMotionControllerProfileLoaded.addOnce((motionController) => {
+                        motionController.onModelLoadedObservable.addOnce(() => {
+                            controllerMesh = motionController.rootMesh;
+                            videoPlane.parent = controllerMesh;
+                        });
+                    });
+                }
+            });
+        });
+
     return scene;
   };
 
