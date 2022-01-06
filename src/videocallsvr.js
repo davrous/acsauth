@@ -424,7 +424,7 @@ function makeVideoButton(videoElement) {
             sideOrientation: BABYLON.Mesh.DOUBLESIDE
     };
     var videoPlane = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);
-    var vidPos = (new BABYLON.Vector3(1,0,0.1))
+    var vidPos = (new BABYLON.Vector3(1.5,0,0.1))
     videoPlane.position = vidPos;
     var videoPlaneMat = new BABYLON.StandardMaterial("m", scene);
     var videoTexture = new BABYLON.VideoTexture("vidtex",videoElement, scene);
@@ -518,20 +518,19 @@ initializeBabylonEngine = function() {
 };
 
 (function() {
-    if (navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.realGUM = navigator.mediaDevices.getUserMedia;
-    }
+
       function fakeGUM(constraints) { 
-      return new Promise(function(resolve, reject) {
-          try {
-             navigator.mediaDevices.realGUM(constraints).then((stream) => {
-               console.log("Stream: " + stream);
-               resolve(canvas.captureStream(60));
-             });
-          } catch (e) {
-            console.log(e);
-            reject(e);
-          }
+        return new Promise(function(resolve, reject) {
+            try {
+                navigator.mediaDevices.realGUM(constraints).then((stream) => {
+                console.log("Stream: " + stream);
+                resolve(canvas.captureStream());
+                });
+            } catch (e) {
+                console.log(e);
+                reject(e);
+            }
           });
       }
   
