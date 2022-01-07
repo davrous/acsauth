@@ -28,8 +28,6 @@ let hangUpCallButton = document.getElementById('hangup-call-button');
 let acceptCallButton = document.getElementById('accept-call-button');
 let startVideoButton = document.getElementById('start-video-button');
 let stopVideoButton = document.getElementById('stop-video-button');
-let remoteVideoContainer = document.getElementById('remoteVideoContainer');
-let localVideoContainer = document.getElementById('localVideoContainer');
 let twitterLoginButton = document.getElementsByClassName('twitterButton')[0];
 let aadLoginButton = document.getElementsByClassName('aadButton')[0];
 let googleLoginButton = document.getElementsByClassName('googleButton')[0];
@@ -136,7 +134,7 @@ async function initializeCallAgent() {
     try {
         const callClient = new CallClient(); 
         tokenCredential = new AzureCommunicationTokenCredential(ACSUser.userToken);
-        callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACS:' + authUserEmail})
+        callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACSVR:' + authUserEmail})
         // Set up a camera device to use.
         deviceManager = await callClient.getDeviceManager();
         await deviceManager.askDevicePermission({ video: true });
@@ -229,18 +227,22 @@ subscribeToCall = (call) => {
         call.on('stateChanged', async () => {
             console.log(`Call state changed: ${call.state}`);
             callStateElement.innerText = call.state;
-            if(call.state === 'Connected' || call.state === 'InLobby') {
+            teamsCallButton.text = call.state;
+            if(call.state === 'Connected') {
+                callReady();
                 acceptCallButton.disabled = true;
                 startCallButton.disabled = true;
                 hangUpCallButton.disabled = false;
                 startVideoButton.disabled = false;
                 stopVideoButton.disabled = false;
+                teamsCallButton.text = "Hang up";
             } else if (call.state === 'Disconnected') {
                 startCallButton.disabled = false;
                 hangUpCallButton.disabled = true;
                 startVideoButton.disabled = true;
                 stopVideoButton.disabled = true;
                 console.log(`Call ended, call end reason={code=${call.callEndReason.code}, subCode=${call.callEndReason.subCode}}`);
+                teamsCallButton.text = "Call";
             }   
         });
 
@@ -325,10 +327,7 @@ subscribeToRemoteVideoStream = async (remoteVideoStream) => {
         try {
             // Create a renderer view for the remote video stream.
             view = await videoStreamRenderer.createView();
-            // Attach the renderer view to the UI.
-            // remoteVideoContainer.hidden = false;
-            // remoteVideoContainer.appendChild(view.target);
-            makeVideoButton(view.target.firstChild);
+            makeVideoTexture(view.target.firstChild);
         } catch (e) {
             console.warn(`Failed to createView, reason=${e.message}, code=${e.code}`);
         }	
@@ -393,9 +392,6 @@ createLocalVideoStream = async () => {
 displayLocalVideoStream = async () => {
     try {
         localVideoStreamRenderer = new VideoStreamRenderer(localVideoStream);
-        // const view = await localVideoStreamRenderer.createView();
-        // localVideoContainer.hidden = false;
-        // localVideoContainer.appendChild(view.target);
     } catch (error) {
         console.error(error);
     } 
@@ -404,7 +400,6 @@ displayLocalVideoStream = async () => {
 removeLocalVideoStream = async() => {
     try {
         localVideoStreamRenderer.dispose();
-        localVideoContainer.hidden = true;
     } catch (error) {
         console.error(error);
     } 
@@ -417,106 +412,182 @@ hangUpCallButton.addEventListener("click", async () => {
     callStateElement.innerText = '-';
 });
 
-function makeVideoButton(videoElement) {
-    var planeOpts = {
-        height: 0.09, 
-        width: 0.16, 
-        sideOrientation: BABYLON.Mesh.DOUBLESIDE
-    };
-
-    videoPlane = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);
-    var vidPos = (new BABYLON.Vector3(0.0,0.12,-0.05));
-    var vidRot = (new BABYLON.Vector3(0,Math.PI,0));
-    videoPlane.position = vidPos;
-    videoPlane.rotation = vidRot;
-
+function makeVideoTexture(videoElement) {
     var videoPlaneMat = new BABYLON.StandardMaterial("m", scene);
     var videoTexture = new BABYLON.VideoTexture("vidtex",videoElement, scene);
     videoPlaneMat.diffuseTexture = videoTexture;
     videoPlaneMat.roughness = 1;
     videoPlaneMat.emissiveColor = new BABYLON.Color3.White();
-    videoPlane.material = videoPlaneMat;
+    videoOnControllerPlane.material = videoPlaneMat;
+    videoFullPlane.material = videoPlaneMat;
 }
 
-let controllerMesh;
-let videoPlane;
+function callReady() {
+    teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/hangupiconMDL2.png";
+    scene.stopAnimation(teamsPlane);
+    teamsPlane.setEnabled(false);
+    videoFullPlane.setEnabled(true);
+}
+
+var inCall = false;
+var videoFullPlane;
+var videoOnControllerPlane;
+var leftControllerMesh;
+var videoOnController = false;
+var teamsCallButton;
+var teamsPlane;
 
 // Babylon.js WebGL code. Creating the scene, loading the helmet mesh.
 // Activating the render loop with an auto animated camera.
 let createScene = function() {
     // Playground needs to return at least an empty scene and default camera
     var scene = new BABYLON.Scene(engine);
+    //var environment = scene.createDefaultEnvironment();
+    // This creates and positions a free camera (non-mesh)
     var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+    // This targets the camera to scene origin
+    camera.setTarget(BABYLON.Vector3.Zero());
+
+    // This attaches the camera to the canvas
+    camera.attachControl(canvas, true);
 
     // Async call
     BABYLON.SceneLoader.Append("https://www.babylonjs.com/Scenes/Espilit/",
         "Espilit.babylon", scene, async function () {
-           var xr = await scene.createDefaultXRExperienceAsync({floorMeshes: [scene.getMeshByName("Sols")]});
+            var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0,1,0), scene);
+            var xr = await scene.createDefaultXRExperienceAsync({floorMeshes: [scene.getMeshByName("Sols")]});
 
-           // Add controllers to shadow.
-            xr.input.onControllerAddedObservable.add((controller) => {
-                
-                if (controller.onMeshLoadedObservable) {
-                    controller.onMeshLoadedObservable.addOnce((rootMesh) => {
-                        controllerMesh = rootMesh;
-                        videoPlane.parent = controllerMesh;
-                    });
-                } else {
-                    controller.onMotionControllerProfileLoaded.addOnce((motionController) => {
-                        motionController.onModelLoadedObservable.addOnce(() => {
-                            controllerMesh = motionController.rootMesh;
-                            videoPlane.parent = controllerMesh;
-                        });
-                    });
+            var planeOpts = {
+                height: 0.09, 
+                width: 0.16, 
+                sideOrientation: BABYLON.Mesh.DOUBLESIDE
+            };
+
+            videoOnControllerPlane = BABYLON.MeshBuilder.CreatePlane("videoOnControllerPlane", planeOpts, scene);
+            var vidPos = (new BABYLON.Vector3(0.0,0.12,-0.05));
+            var vidRot = (new BABYLON.Vector3(0,Math.PI,0));
+            videoOnControllerPlane.position = vidPos;
+            videoOnControllerPlane.rotation = vidRot;
+            videoOnControllerPlane.setEnabled(false);
+
+            var fullPlaneOpts = {
+                height: 1.35, 
+                width: 2.4, 
+                sideOrientation: BABYLON.Mesh.DOUBLESIDE
+            };
+
+            videoFullPlane = BABYLON.MeshBuilder.CreatePlane("videoFullPlane", fullPlaneOpts, scene);
+            var vidPos = (new BABYLON.Vector3(-2.82, 2.16, 4.44));
+            var vidRot = (new BABYLON.Vector3(0,0,0));
+            videoFullPlane.position = vidPos;
+            videoFullPlane.rotation = vidRot;
+            videoFullPlane.setEnabled(false);
+
+           	const teamsPlaneMat = new BABYLON.StandardMaterial("");
+            teamsPlaneMat.opacityTexture = new BABYLON.Texture("https://david.blob.core.windows.net/acs/MSTeamsLogo.png");
+            teamsPlaneMat.diffuseTexture = new BABYLON.Texture("https://david.blob.core.windows.net/acs/MSTeamsLogo.png");
+            teamsPlaneMat.emissiveColor = new BABYLON.Color3.White();
+            
+            teamsPlane = BABYLON.MeshBuilder.CreatePlane("teamsPlane", {size: 1.5, sideOrientation: BABYLON.Mesh.DOUBLESIDE});
+            teamsPlane.position = new BABYLON.Vector3(-2.82, 2.16, 4.44);
+            teamsPlane.material = teamsPlaneMat;
+            
+            var anchor = new BABYLON.AbstractMesh("anchor", scene);
+            anchor.position = new BABYLON.Vector3(-2.82, 1, 4.44)
+            // Create the 3D UI manager
+            var manager = new BABYLON.GUI.GUI3DManager(scene);
+
+            // Let's add a button
+            teamsCallButton = new BABYLON.GUI.HolographicButton("teamsCall");
+            manager.addControl(teamsCallButton);
+            teamsCallButton.linkToTransformNode(anchor);
+            teamsCallButton.position.z = 0;
+            teamsCallButton.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+
+            teamsCallButton.text = "Call";
+            teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/calliconMDL2.png";
+            teamsCallButton.onPointerUpObservable.add(async function(){
+                if (!inCall) {
+                    inCall = true;
+                    await startCallButton.onclick();
+                }
+                else {
+                    await call.hangUp();
+                    inCall = false;
+                    teamsCallButton.text = "Call";
+                    teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/calliconMDL2.png";
+                    scene.beginAnimation(teamsPlane, 0, frameRate, true, 0.1);
+                    teamsPlane.setEnabled(true);
+                    videoFullPlane.setEnabled(false);
+                    videoOnControllerPlane.setEnabled(false);
+                    videoOnController = false;
                 }
             });
+
+            scene.activeCamera.attachControl(canvas, false);
+            camera = scene.activeCamera;
+
+            // Add controllers to shadow.
+            xr.input.onControllerAddedObservable.add((controller) => {
+                controller.onMotionControllerInitObservable.add((motionController) => {
+                    if (motionController.handness === 'left') {                       
+                        if (controller.onMeshLoadedObservable) {
+                            controller.onMeshLoadedObservable.addOnce((rootMesh) => {
+                                leftControllerMesh = rootMesh;
+                            });
+                        } else {
+                            controller.onMotionControllerProfileLoaded.addOnce((motionController) => {
+                                motionController.onModelLoadedObservable.addOnce(() => {
+                                    leftControllerMesh = motionController.rootMesh;
+                                });
+                            });
+                        }
+                    }
+                    else {
+                        const xr_ids = motionController.getComponentIds();
+                        let abuttonComponent = motionController.getComponent(xr_ids[3]);//a-button
+                        abuttonComponent.onButtonStateChangedObservable.add(() => {
+                            if (inCall && abuttonComponent.pressed) {
+                                if (!videoOnController) {
+                                    videoOnControllerPlane.parent = leftControllerMesh;
+                                    videoFullPlane.setEnabled(false);
+                                    videoOnControllerPlane.setEnabled(true);
+                                    videoOnController = true;
+                                }
+                                else {
+                                    videoOnControllerPlane.parent = null;
+                                    videoOnControllerPlane.setEnabled(false);
+                                    videoFullPlane.setEnabled(true);
+                                    videoOnController = false;
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            const frameRate = 60;
+            const teamsRotation = new BABYLON.Animation("teamsRotation", "rotation.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+            const keyFrames = []; 
+
+            keyFrames.push({
+                frame: 0,
+                value: 0
+            });
+
+            keyFrames.push({
+                frame: frameRate,
+                value: Math.PI * 2
+            });
+
+            teamsRotation.setKeys(keyFrames);
+            teamsPlane.animations.push(teamsRotation);
+            scene.beginAnimation(teamsPlane, 0, frameRate, true, 0.1);
         });
 
     return scene;
   };
-
-// var createScene = function () {
-//     var scene = new BABYLON.Scene(engine);
-//     var camera = new BABYLON.ArcRotateCamera("cam", -Math.PI / 2, Math.PI / 2, 5, BABYLON.Vector3.Zero());
-//     var light = new BABYLON.HemisphericLight("sun", new BABYLON.Vector3(0,1,0), scene);
-//     var anchor = new BABYLON.TransformNode("");
-    
-//     camera.wheelDeltaPercentage = 0.01;
-//     camera.attachControl(canvas, true);
-//     camera.lowerRadiusLimit = 5;
-//     camera.upperRadiusLimit = 30;
-
-//     // Define a general environment texture
-//     hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
-//     scene.environmentTexture = hdrTexture;
-
-//     scene.createDefaultSkybox(hdrTexture, true, 200, 0.7);
-
-//     // Create the 3D UI manager
-//     var manager = new BABYLON.GUI.GUI3DManager(scene);
-
-//     panel = new BABYLON.GUI.SpherePanel();
-//     panel.columns = 3;
-//     panel.margin = 0.5;
- 
-//     manager.addControl(panel);
-//     panel.linkToTransformNode(anchor);
-//     panel.position.z = -1.5;
-
-//     //makePushButtons();
-    
-
-
-//     // function makePushButtons() {
-//     //     panel.blockLayout = true;
-//     //     for (var i = 0; i < 3; i++) {
-//     //         makeVideoButton();
-//     //     }
-//     //     panel.blockLayout = false;
-//     // }
-
-//     return scene;
-// };
 
 initializeBabylonEngine = function() {
     engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
