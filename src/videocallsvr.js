@@ -235,14 +235,14 @@ subscribeToCall = (call) => {
                 hangUpCallButton.disabled = false;
                 startVideoButton.disabled = false;
                 stopVideoButton.disabled = false;
-                teamsCallButton.text = "Hang up";
+                teamsCallButton.textBlock.text = "Hang up";
             } else if (call.state === 'Disconnected') {
                 startCallButton.disabled = false;
                 hangUpCallButton.disabled = true;
                 startVideoButton.disabled = true;
                 stopVideoButton.disabled = true;
                 console.log(`Call ended, call end reason={code=${call.callEndReason.code}, subCode=${call.callEndReason.subCode}}`);
-                teamsCallButton.text = "Call";
+                teamsCallButton.textBlock.text = "Call";
             }   
         });
 
@@ -611,36 +611,29 @@ initializeBabylonEngine = function() {
     });
 };
 
-var metaStream;
-
 (function() {
-      navigator.mediaDevices.realGUM = navigator.mediaDevices.getUserMedia;
+    navigator.mediaDevices.realGUM = navigator.mediaDevices.getUserMedia;
 
-      function fakeGUM(constraints) { 
-        return new Promise(function(resolve, reject) {
-            try {
-                navigator.mediaDevices.realGUM(constraints).then((stream) => {
-                console.log("Stream: " + stream);
-                if (!metaStream || stream.getAudioTracks()) {
-                    console.log("audioTracks" + stream.getAudioTracks());
-                    console.log("audioTracks()[0]" + stream.getAudioTracks()[0]);
-                    if (stream.getAudioTracks()[0]) {
-                        console.log("Merging audio & canvas rendering");
-                        metaStream = new MediaStream([stream.getAudioTracks()[0],
-                        canvas.captureStream().getTracks()[0]]);
-                    }
-                    else {
-                        metaStream = canvas.captureStream();
-                    }
+    function fakeGUM(constraints) { 
+      return new Promise(function(resolve, reject) {
+          try {
+              console.log("constraints: " + constraints);
+              navigator.mediaDevices.realGUM(constraints).then((stream) => {
+                if (constraints.audio) {
+                    console.log("Sending normal audio feed.");
+                    resolve(stream);
                 }
-                resolve(metaStream);
-                });
-            } catch (e) {
-                console.log(e);
-                reject(e);
-            }
-          });
-      }
-  
-      navigator.mediaDevices.getUserMedia = fakeGUM;
-  })();
+                if (constraints.video) {
+                    console.log("Sending Metaverse rendering instead of video feed.");
+                    resolve(canvas.captureStream(30));
+                }                  
+              });
+          } catch (e) {
+              console.log(e);
+              reject(e);
+          }
+        });
+    }
+
+    navigator.mediaDevices.getUserMedia = fakeGUM;
+})();
