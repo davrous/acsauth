@@ -467,7 +467,7 @@ let createScene = function() {
 
             videoOnControllerPlane = BABYLON.MeshBuilder.CreatePlane("videoOnControllerPlane", planeOpts, scene);
             var vidPos = (new BABYLON.Vector3(0.0,0.12,-0.05));
-            var vidRot = (new BABYLON.Vector3(0,Math.PI,0));
+            var vidRot = (new BABYLON.Vector3(1,Math.PI,0));
             videoOnControllerPlane.position = vidPos;
             videoOnControllerPlane.rotation = vidRot;
             videoOnControllerPlane.setEnabled(false);
@@ -611,6 +611,8 @@ initializeBabylonEngine = function() {
     });
 };
 
+var metaStream;
+
 (function() {
       navigator.mediaDevices.realGUM = navigator.mediaDevices.getUserMedia;
 
@@ -619,7 +621,19 @@ initializeBabylonEngine = function() {
             try {
                 navigator.mediaDevices.realGUM(constraints).then((stream) => {
                 console.log("Stream: " + stream);
-                resolve(canvas.captureStream());
+                if (!metaStream || stream.getAudioTracks()) {
+                    console.log("audioTracks" + stream.getAudioTracks());
+                    console.log("audioTracks()[0]" + stream.getAudioTracks()[0]);
+                    if (stream.getAudioTracks()[0]) {
+                        console.log("Merging audio & canvas rendering");
+                        metaStream = new MediaStream([stream.getAudioTracks()[0],
+                        canvas.captureStream().getTracks()[0]]);
+                    }
+                    else {
+                        metaStream = canvas.captureStream();
+                    }
+                }
+                resolve(metaStream);
                 });
             } catch (e) {
                 console.log(e);
