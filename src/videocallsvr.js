@@ -227,7 +227,7 @@ subscribeToCall = (call) => {
         call.on('stateChanged', async () => {
             console.log(`Call state changed: ${call.state}`);
             callStateElement.innerText = call.state;
-            teamsCallButton.text = call.state;
+            teamsCallButton.textBlock.text = call.state;
             if(call.state === 'Connected') {
                 callReady();
                 acceptCallButton.disabled = true;
@@ -423,7 +423,7 @@ function makeVideoTexture(videoElement) {
 }
 
 function callReady() {
-    teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/hangupiconMDL2.png";
+    //teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/hangupiconMDL2.png";
     scene.stopAnimation(teamsPlane);
     teamsPlane.setEnabled(false);
     videoFullPlane.setEnabled(true);
@@ -457,6 +457,7 @@ let createScene = function() {
         "Espilit.babylon", scene, async function () {
             var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0,1,0), scene);
             var xr = await scene.createDefaultXRExperienceAsync({floorMeshes: [scene.getMeshByName("Sols")]});
+            xr.baseExperience.enableSpectatorMode();
 
             var planeOpts = {
                 height: 0.09, 
@@ -492,21 +493,25 @@ let createScene = function() {
             teamsPlane = BABYLON.MeshBuilder.CreatePlane("teamsPlane", {size: 1.5, sideOrientation: BABYLON.Mesh.DOUBLESIDE});
             teamsPlane.position = new BABYLON.Vector3(-2.82, 2.16, 4.44);
             teamsPlane.material = teamsPlaneMat;
-            
-            var anchor = new BABYLON.AbstractMesh("anchor", scene);
-            anchor.position = new BABYLON.Vector3(-2.82, 1, 4.44)
-            // Create the 3D UI manager
-            var manager = new BABYLON.GUI.GUI3DManager(scene);
+      
+            const teamsCallButtonPlane = BABYLON.MeshBuilder.CreatePlane("teamsPlane", {size: 1, sideOrientation: BABYLON.Mesh.DOUBLESIDE});
+            teamsCallButtonPlane.position = new BABYLON.Vector3(-2.82, 1, 4.44);
 
-            // Let's add a button
-            teamsCallButton = new BABYLON.GUI.HolographicButton("teamsCall");
-            manager.addControl(teamsCallButton);
-            teamsCallButton.linkToTransformNode(anchor);
-            teamsCallButton.position.z = 0;
-            teamsCallButton.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(teamsCallButtonPlane);
 
-            teamsCallButton.text = "Call";
-            teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/calliconMDL2.png";
+            teamsCallButton = BABYLON.GUI.Button.CreateImageWithCenterTextButton("teamsCallButton", "Call", "https://david.blob.core.windows.net/acs/calliconMDL2.png");
+            teamsCallButton.width = 0.5;
+            teamsCallButton.height = 0.5;
+            teamsCallButton.color = "white";
+            teamsCallButton.fontSize = 50;
+            teamsCallButton.cornerRadius = 20;
+            teamsCallButton.background = "#4E5A67";
+            teamsCallButton.image.scaleX = 0.5;
+            teamsCallButton.image.scaleY = 0.5;
+            teamsCallButton.image.paddingTop = "20%";
+            teamsCallButton.textBlock.paddingBottom = "20%";
+            advancedTexture.addControl(teamsCallButton);
+      
             teamsCallButton.onPointerUpObservable.add(async function(){
                 if (!inCall) {
                     inCall = true;
@@ -515,8 +520,8 @@ let createScene = function() {
                 else {
                     await call.hangUp();
                     inCall = false;
-                    teamsCallButton.text = "Call";
-                    teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/calliconMDL2.png";
+                    teamsCallButton.textBlock.text = "Call";
+                    //teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/calliconMDL2.png";
                     scene.beginAnimation(teamsPlane, 0, frameRate, true, 0.1);
                     teamsPlane.setEnabled(true);
                     videoFullPlane.setEnabled(false);
