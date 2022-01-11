@@ -468,7 +468,7 @@ let createScene = function() {
     var scene = new BABYLON.Scene(engine);
     //var environment = scene.createDefaultEnvironment();
     // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+    var camera = new BABYLON.UniversalCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
 
     // This targets the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero());
@@ -677,11 +677,6 @@ initializeBabylonEngine = function() {
         return {
             deviceId: this.deviceId,
             groupId: this.groupId,
-            // autoGainControl: false,
-            // channelCount: 0,
-            // echoCancellation: false,
-            // latency: 0,
-            // noiseSuppression: false,
             aspectRatio: 1.77,
             frameRate: 30,
             width: 1066,
@@ -700,7 +695,6 @@ initializeBabylonEngine = function() {
                   if (devices) {
                       //devices.push(fakeInputDeviceInfo);
                        console.dir(devices);
-                       //console.dir(devices[11].getCapabilities());
                   }
                   resolve(devices);
                 });
