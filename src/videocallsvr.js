@@ -152,14 +152,14 @@ async function initializeCallAgent() {
         deviceManager = await callClient.getDeviceManager();
         // Set up a camera device to use.
         deviceManager = await callClient.getDeviceManager();
-        localCameras = await deviceManager.getCameras();
-        localMicrophones = await deviceManager.getMicrophones();
-        localSpeakers = await deviceManager.getSpeakers();
+        // localCameras = await deviceManager.getCameras();
+        // localMicrophones = await deviceManager.getMicrophones();
+        // localSpeakers = await deviceManager.getSpeakers();
 
-        fillCamerasSelector(localCameras);
-        camerasSelector.addEventListener("change", (event) => {
-            selectedCameraIndex = event.target.value;
-        });
+        // fillCamerasSelector(localCameras);
+        // camerasSelector.addEventListener("change", (event) => {
+        //     selectedCameraIndex = event.target.value;
+        // });
 
         await deviceManager.askDevicePermission({ video: true });
         await deviceManager.askDevicePermission({ audio: true });
@@ -698,7 +698,7 @@ initializeBabylonEngine = function() {
               navigator.mediaDevices.realED().then((devices) => {
                   console.log("Devices found.");
                   if (devices) {
-                      devices.push(fakeInputDeviceInfo);
+                      //devices.push(fakeInputDeviceInfo);
                        console.dir(devices);
                        //console.dir(devices[11].getCapabilities());
                   }
