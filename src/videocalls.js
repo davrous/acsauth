@@ -17,6 +17,10 @@ let call;
 let incomingCall;
 let localVideoStream;
 let localVideoStreamRenderer;
+let localCameras;
+let localMicrophones;
+let localSpeakers;
+let selectedCameraIndex = 0;
 // json ACS user object return by /api/users/{email}
 let ACSUser;
 let authUserEmail = "";
@@ -37,7 +41,7 @@ let githubLoginButton = document.getElementsByClassName('githubButton')[0];
 let logoutButton = document.getElementsByClassName('logoutButton')[0];
 let meetingLinkInput = document.getElementById('teams-link-input');
 let callStateElement = document.getElementById('call-state');
-let recordingStateElement = document.getElementById('recording-state');
+let camerasSelector = document.getElementById('camerasSelector');
 
 // Simple function to check if the user has logged in or not yet
 async function getUserInfo() {
@@ -52,6 +56,7 @@ async function getUserInfo() {
     }
 }
 
+// API call to convert an email ID to an ACS ID
 async function getUserAcsId(userEmail) {
     try {
         // Calling the API to just try to resolve an email with an existing ACS User ID created
@@ -101,7 +106,7 @@ async function getUserAcsId(userEmail) {
         document.querySelector('#user_email').textContent = authUserEmail;
         document.querySelector('#loginZone').style.display = "none";
         document.querySelector('#logoutZone').style.display = "block";
-        document.querySelector('#acsZone').style.display = "initial";
+        document.querySelector('#acsZone').style.display = "block";
         try {
             await initializeCallAgent();
             document.querySelector('#initialize-call-agent').style.display = "none";
@@ -120,6 +125,19 @@ async function getUserAcsId(userEmail) {
     }
 }())
 
+function fillCamerasSelector(localCameras) {
+    localCameras.forEach((camera, index) => {
+        camerasSelector.add(createOptionElement(camera.name, index));
+    });
+}
+
+function createOptionElement(text, value) {
+    var option = document.createElement("option");
+    option.text = text;
+    option.value = value;
+    return option;
+}
+
 /**
  * Using the CallClient, initialize a CallAgent instance with a CommunicationUserCredential which will enable us to make outgoing calls and receive incoming calls. 
  * You can then use the CallClient.getDeviceManager() API instance to get the DeviceManager.
@@ -128,9 +146,19 @@ async function initializeCallAgent() {
     try {
         const callClient = new CallClient(); 
         tokenCredential = new AzureCommunicationTokenCredential(ACSUser.userToken);
+
         callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACS:' + authUserEmail})
         // Set up a camera device to use.
         deviceManager = await callClient.getDeviceManager();
+        localCameras = await deviceManager.getCameras();
+        localMicrophones = await deviceManager.getMicrophones();
+        localSpeakers = await deviceManager.getSpeakers();
+
+        fillCamerasSelector(localCameras);
+        camerasSelector.addEventListener("change", (event) => {
+            selectedCameraIndex = event.target.value;
+        });
+
         await deviceManager.askDevicePermission({ video: true });
         await deviceManager.askDevicePermission({ audio: true });
         // Listen for an incoming call to accept.
@@ -162,14 +190,14 @@ startCallButton.onclick = async () => {
     try {
         const localVideoStream = await createLocalVideoStream();
         const videoOptions = localVideoStream ? { localVideoStreams: [localVideoStream] } : undefined;
-        let meetingLink = meetingLinkInput.value.trim();
-        if (meetingLink !== "") {
+        let meetingLink = calleeAcsUserId.value.trim();
+        if (meetingLink.includes("teams.microsoft.com")) {
             // join with meeting link
             call = callAgent.join({meetingLink: meetingLink}, { videoOptions });
         }
         else {
             // Converting email address to internal ACS User Id
-            let AcsUserId = await getUserAcsId(calleeAcsUserId.value.trim());
+            let AcsUserId = await getUserAcsId(meetingLink);
             if (AcsUserId) {
                 call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });  
             }
@@ -318,7 +346,7 @@ subscribeToRemoteVideoStream = async (remoteVideoStream) => {
             // Create a renderer view for the remote video stream.
             view = await videoStreamRenderer.createView();
             // Attach the renderer view to the UI.
-            remoteVideoContainer.hidden = false;
+            remoteVideoContainer.style.display = "flex";
             remoteVideoContainer.appendChild(view.target);
         } catch (e) {
             console.warn(`Failed to createView, reason=${e.message}, code=${e.code}`);
@@ -373,7 +401,7 @@ stopVideoButton.onclick = async () => {
  */
 // Create a local video stream for your camera device
 createLocalVideoStream = async () => {
-    const camera = (await deviceManager.getCameras())[0];
+    const camera = (await deviceManager.getCameras())[selectedCameraIndex];
     if (camera) {
         return new LocalVideoStream(camera);
     } else {
@@ -385,7 +413,7 @@ displayLocalVideoStream = async () => {
     try {
         localVideoStreamRenderer = new VideoStreamRenderer(localVideoStream);
         const view = await localVideoStreamRenderer.createView();
-        localVideoContainer.hidden = false;
+        localVideoContainer.style.display = "flex";
         localVideoContainer.appendChild(view.target);
     } catch (error) {
         console.error(error);
@@ -395,7 +423,7 @@ displayLocalVideoStream = async () => {
 removeLocalVideoStream = async() => {
     try {
         localVideoStreamRenderer.dispose();
-        localVideoContainer.hidden = true;
+        localVideoContainer.style.display = "none";
     } catch (error) {
         console.error(error);
     } 

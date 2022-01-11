@@ -5,12 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
-  <title>Azure Communication Services Auth Sample</title>
+  <title>Azure Communication Services & SWA Authentication</title>
 </head>
 
 <body>
     <main>
-      <h1>Azure Communication Services Auth Sample</h1>
+      <h1>Azure Communication Services & SWA Authentication</h1>
       <p>Current User email: <b id="user_email">...</b></p>
       <div id="loginZone">
         <p>Please choose an authentication provider:</p>
@@ -20,19 +20,23 @@
         <button class="loginButton githubButton" title="Login with your Github account"/>
       </div>
       <div id="logoutZone">
-        <p>Current ACS User ID: <b id="acs_user_id">...</b></p>
+        Current ACS User ID: <b id="acs_user_id">...</b>
         <button class="logoutButton" title="Logout">Logout</button>
+        <p></p>
+        <label for="camerasSelector">Choose a camera:</label>
+
+        <select name="camerasSelector" id="camerasSelector">
+        </select>
       </div>
 
       <div id="acsZone">
         <span id="initialize-call-agent">Initializing call agent...</span>
         <div id="acsVideoZone">
+          <span>Enter callee's id or Teams meeting link</span>
           <input id="callee-acs-user-id"
               type="text"
-              placeholder="Enter callee's user email format: 'user@github, user@twitter or MS email'" />
-          <input id="teams-link-input" type="text" placeholder="Teams meeting link" />
-            <p>Call state <span style="font-weight: bold" id="call-state">-</span></p>
-            <p><span style="font-weight: bold" id="recording-state"></span></p>
+              placeholder="'user@github, user@twitter, email or teams.microsoft.com meeting link'" />
+          <p>Call state <span style="font-weight: bold" id="call-state">-</span></p>
 
           <div id="buttonsZone">
             <button id="start-call-button" type="button" disabled="true">Start Call</button>
@@ -42,15 +46,13 @@
             <button id="stop-video-button" type="button" disabled="true">Stop Video</button>
           </div>
           <div id="videosZone">
-            <div id="remoteVideoContainer" hidden>Remote participants' video streams:</div>
-            <div id="localVideoContainer" hidden>Local video stream:</div>
+            <div id="remoteVideoContainer">Remote participants' video streams:</div>
+            <div id="localVideoContainer">Local video stream:</div>
            </div>
         <div>
       </div>
     </main>
 
-    <script>
-    </script>
     <script src="./bundle.js"></script>
 </body>
 

@@ -17,6 +17,7 @@ let call;
 let incomingCall;
 let localVideoStream;
 let localVideoStreamRenderer;
+let selectedCameraIndex = 0;
 // json ACS user object return by /api/users/{email}
 let ACSUser;
 let authUserEmail = "";
@@ -33,9 +34,8 @@ let aadLoginButton = document.getElementsByClassName('aadButton')[0];
 let googleLoginButton = document.getElementsByClassName('googleButton')[0];
 let githubLoginButton = document.getElementsByClassName('githubButton')[0];
 let logoutButton = document.getElementsByClassName('logoutButton')[0];
-let meetingLinkInput = document.getElementById('teams-link-input');
 let callStateElement = document.getElementById('call-state');
-let recordingStateElement = document.getElementById('recording-state');
+let camerasSelector = document.getElementById('camerasSelector');
 
 // 3D
 let canvas = document.getElementById("renderCanvas");
@@ -106,7 +106,7 @@ async function getUserAcsId(userEmail) {
         document.querySelector('#user_email').textContent = authUserEmail;
         document.querySelector('#loginZone').style.display = "none";
         document.querySelector('#logoutZone').style.display = "block";
-        document.querySelector('#acsZone').style.display = "initial";
+        document.querySelector('#acsZone').style.display = "block";
         try {
             await initializeCallAgent();
             document.querySelector('#initialize-call-agent').style.display = "none";
@@ -126,6 +126,19 @@ async function getUserAcsId(userEmail) {
     }
 }())
 
+function fillCamerasSelector(localCameras) {
+    localCameras.forEach((camera, index) => {
+        camerasSelector.add(createOptionElement(camera.name, index));
+    });
+}
+
+function createOptionElement(text, value) {
+    var option = document.createElement("option");
+    option.text = text;
+    option.value = value;
+    return option;
+}
+
 /**
  * Using the CallClient, initialize a CallAgent instance with a CommunicationUserCredential which will enable us to make outgoing calls and receive incoming calls. 
  * You can then use the CallClient.getDeviceManager() API instance to get the DeviceManager.
@@ -137,6 +150,17 @@ async function initializeCallAgent() {
         callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACSVR:' + authUserEmail})
         // Set up a camera device to use.
         deviceManager = await callClient.getDeviceManager();
+        // Set up a camera device to use.
+        deviceManager = await callClient.getDeviceManager();
+        localCameras = await deviceManager.getCameras();
+        localMicrophones = await deviceManager.getMicrophones();
+        localSpeakers = await deviceManager.getSpeakers();
+
+        fillCamerasSelector(localCameras);
+        camerasSelector.addEventListener("change", (event) => {
+            selectedCameraIndex = event.target.value;
+        });
+
         await deviceManager.askDevicePermission({ video: true });
         await deviceManager.askDevicePermission({ audio: true });
         // Listen for an incoming call to accept.
@@ -168,8 +192,8 @@ startCallButton.onclick = async () => {
     try {
         const localVideoStream = await createLocalVideoStream();
         const videoOptions = localVideoStream ? { localVideoStreams: [localVideoStream] } : undefined;
-        let meetingLink = meetingLinkInput.value.trim();
-        if (meetingLink !== "") {
+        let meetingLink = calleeAcsUserId.value.trim();
+        if (meetingLink.includes("teams.microsoft.com")) {
             // join with meeting link
             call = callAgent.join({meetingLink: meetingLink}, { videoOptions });
         }
@@ -381,7 +405,7 @@ stopVideoButton.onclick = async () => {
  */
 // Create a local video stream for your camera device
 createLocalVideoStream = async () => {
-    const camera = (await deviceManager.getCameras())[0];
+    const camera = (await deviceManager.getCameras())[selectedCameraIndex];
     if (camera) {
         return new LocalVideoStream(camera);
     } else {
@@ -636,4 +660,56 @@ initializeBabylonEngine = function() {
     }
 
     navigator.mediaDevices.getUserMedia = fakeGUM;
+})();
+
+(function() {
+    navigator.mediaDevices.realED = navigator.mediaDevices.enumerateDevices;
+
+    let fakeInputDeviceInfo = {
+        deviceId: "f5d701eaf8e36daf5bf28b679d4d59f37e80477dcf19c96a6c95metaversecam", 
+        groupId:  "34d24946002876bfd3996a03b0c9469da5a9a59310b5520fffeemetaversecam",
+        kind: "videoinput",
+        label: "Metaverse Camera"
+    };
+
+    fakeInputDeviceInfo.getCapabilities = function () {
+        debugger;
+        return {
+            deviceId: this.deviceId,
+            groupId: this.groupId,
+            // autoGainControl: false,
+            // channelCount: 0,
+            // echoCancellation: false,
+            // latency: 0,
+            // noiseSuppression: false,
+            aspectRatio: 1.77,
+            frameRate: 30,
+            width: 1066,
+            height: 600,
+            facingMode: [],
+            resizeMode: ["none"]
+        }
+    };
+
+    function fakeED() { 
+      return new Promise(function(resolve, reject) {
+          try {
+              console.log("Into enumerateDevices.");
+              navigator.mediaDevices.realED().then((devices) => {
+                  console.log("Devices found.");
+                  if (devices) {
+                      devices.push(fakeInputDeviceInfo);
+                       console.dir(devices);
+                       //console.dir(devices[11].getCapabilities());
+                  }
+                  resolve(devices);
+                });
+          } catch (e) {
+              console.log(e);
+              reject(e);
+          }
+        });
+    }
+
+    navigator.mediaDevices.enumerateDevices = fakeED;
 })();
