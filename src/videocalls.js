@@ -27,6 +27,7 @@ let authUserEmail = "";
 
 // UI widgets
 let calleeAcsUserId = document.getElementById('callee-acs-user-id');
+let callEchoBot = document.getElementById('callEchoBot');
 let startCallButton = document.getElementById('start-call-button');
 let hangUpCallButton = document.getElementById('hangup-call-button');
 let acceptCallButton = document.getElementById('accept-call-button');
@@ -39,9 +40,10 @@ let aadLoginButton = document.getElementsByClassName('aadButton')[0];
 let googleLoginButton = document.getElementsByClassName('googleButton')[0];
 let githubLoginButton = document.getElementsByClassName('githubButton')[0];
 let logoutButton = document.getElementsByClassName('logoutButton')[0];
-let meetingLinkInput = document.getElementById('teams-link-input');
 let callStateElement = document.getElementById('call-state');
 let camerasSelector = document.getElementById('camerasSelector');
+let microsSelector = document.getElementById('microsSelector');
+let speakersSelector = document.getElementById('speakersSelector');
 
 // Simple function to check if the user has logged in or not yet
 async function getUserInfo() {
@@ -86,6 +88,10 @@ async function getUserAcsId(userEmail) {
         window.location.href="/.auth/logout";
     });
 
+    callEchoBot.addEventListener('click', (event) => {
+        calleeAcsUserId.disabled = callEchoBot.checked;       
+     });  
+
     var authenticatedUser = await getUserInfo();
     
     // We can  call the API to get an ACS User ID only if we've been authenticated
@@ -125,9 +131,9 @@ async function getUserAcsId(userEmail) {
     }
 }())
 
-function fillCamerasSelector(localCameras) {
-    localCameras.forEach((camera, index) => {
-        camerasSelector.add(createOptionElement(camera.name, index));
+function fillSelector(devices, selector) {
+    devices.forEach((device, index) => {
+        selector.add(createOptionElement(device.name, index));
     });
 }
 
@@ -154,9 +160,19 @@ async function initializeCallAgent() {
         localMicrophones = await deviceManager.getMicrophones();
         localSpeakers = await deviceManager.getSpeakers();
 
-        fillCamerasSelector(localCameras);
+        fillSelector(localCameras, camerasSelector);
         camerasSelector.addEventListener("change", (event) => {
             selectedCameraIndex = event.target.value;
+        });
+
+        fillSelector(localMicrophones, microsSelector);
+        microsSelector.addEventListener("change", async (event) => {
+            await deviceManager.selectMicrophone(localMicrophones[event.target.value]);
+        });
+
+        fillSelector(localSpeakers, speakersSelector);
+        speakersSelector.addEventListener("change", async (event) => {
+            await deviceManager.selectSpeaker(localSpeakers[event.target.value]);
         });
 
         await deviceManager.askDevicePermission({ video: true });
@@ -191,18 +207,25 @@ startCallButton.onclick = async () => {
         const localVideoStream = await createLocalVideoStream();
         const videoOptions = localVideoStream ? { localVideoStreams: [localVideoStream] } : undefined;
         let meetingLink = calleeAcsUserId.value.trim();
-        if (meetingLink.includes("teams.microsoft.com")) {
-            // join with meeting link
-            call = callAgent.join({meetingLink: meetingLink}, { videoOptions });
+        // Easy way to do a first check that your ACS setup works ok
+        // Let's call the echo bot
+        if (callEchoBot.checked) {
+            call = callAgent.startCall([{ id: '8:echo123' }], { videoOptions });  
         }
         else {
-            // Converting email address to internal ACS User Id
-            let AcsUserId = await getUserAcsId(meetingLink);
-            if (AcsUserId) {
-                call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });  
+            if (meetingLink.includes("teams.microsoft.com")) {
+                // join with meeting link
+                call = callAgent.join({meetingLink: meetingLink}, { videoOptions });
             }
             else {
-                console.warn("No ACS User Id found.");
+                // Converting email address to internal ACS User Id
+                let AcsUserId = await getUserAcsId(meetingLink);
+                if (AcsUserId) {
+                    call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });  
+                }
+                else {
+                    console.warn("No ACS User Id found.");
+                }
             }
         }
         // Subscribe to the call's properties and events.

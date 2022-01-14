@@ -36,6 +36,8 @@ let githubLoginButton = document.getElementsByClassName('githubButton')[0];
 let logoutButton = document.getElementsByClassName('logoutButton')[0];
 let callStateElement = document.getElementById('call-state');
 let camerasSelector = document.getElementById('camerasSelector');
+let microsSelector = document.getElementById('microsSelector');
+let speakersSelector = document.getElementById('speakersSelector');
 
 // 3D
 let canvas = document.getElementById("renderCanvas");
@@ -126,9 +128,9 @@ async function getUserAcsId(userEmail) {
     }
 }())
 
-function fillCamerasSelector(localCameras) {
-    localCameras.forEach((camera, index) => {
-        camerasSelector.add(createOptionElement(camera.name, index));
+function fillSelector(devices, selector) {
+    devices.forEach((device, index) => {
+        selector.add(createOptionElement(device.name, index));
     });
 }
 
@@ -150,16 +152,24 @@ async function initializeCallAgent() {
         callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACSVR:' + authUserEmail})
         // Set up a camera device to use.
         deviceManager = await callClient.getDeviceManager();
-        // Set up a camera device to use.
-        deviceManager = await callClient.getDeviceManager();
-        // localCameras = await deviceManager.getCameras();
-        // localMicrophones = await deviceManager.getMicrophones();
-        // localSpeakers = await deviceManager.getSpeakers();
+        localCameras = await deviceManager.getCameras();
+        localMicrophones = await deviceManager.getMicrophones();
+        localSpeakers = await deviceManager.getSpeakers();
 
-        // fillCamerasSelector(localCameras);
-        // camerasSelector.addEventListener("change", (event) => {
-        //     selectedCameraIndex = event.target.value;
-        // });
+        fillSelector(localCameras, camerasSelector);
+        camerasSelector.addEventListener("change", (event) => {
+            selectedCameraIndex = event.target.value;
+        });
+
+        fillSelector(localMicrophones, microsSelector);
+        microsSelector.addEventListener("change", async (event) => {
+            await deviceManager.selectMicrophone(localMicrophones[event.target.value]);
+        });
+
+        fillSelector(localSpeakers, speakersSelector);
+        speakersSelector.addEventListener("change", async (event) => {
+            await deviceManager.selectSpeaker(localSpeakers[event.target.value]);
+        });
 
         await deviceManager.askDevicePermission({ video: true });
         await deviceManager.askDevicePermission({ audio: true });
@@ -199,12 +209,12 @@ startCallButton.onclick = async () => {
         }
         else {
             // Converting email address to internal ACS User Id
-            let AcsUserId = await getUserAcsId(calleeAcsUserId.value.trim());
+            let AcsUserId = await getUserAcsId(meetingLink);
             if (AcsUserId) {
                 call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });  
             }
             else {
-                console.warn("No ACS User Id found.");
+                console.error("No ACS User Id found for: " + meetingLink);
             }
         }
         // Subscribe to the call's properties and events.

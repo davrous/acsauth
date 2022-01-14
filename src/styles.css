@@ -14,11 +14,10 @@ main {
   padding: 20px;
 }
 
-input {
+#callee-acs-user-id {
   width: 100%;
   margin: 5px;
   max-width: 500px;
-  display: block;
 }
 
 #buttonsZone {
@@ -121,4 +120,18 @@ input {
   height: 100%;
   touch-action: none;
   margin-top: 20px;
+}
+
+#echoBotZone {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
+#selectors {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#selectors span {
+  margin: 5px;
 }

@@ -23,19 +23,37 @@
         Current ACS User ID: <b id="acs_user_id">...</b>
         <button class="logoutButton" title="Logout">Logout</button>
         <p></p>
-        <label for="camerasSelector">Choose a camera:</label>
-
-        <select name="camerasSelector" id="camerasSelector">
-        </select>
+        <div id="selectors">
+          <span>
+            <label for="camerasSelector">Choose a camera:</label>
+            <select name="camerasSelector" id="camerasSelector"></select>
+          </span>
+          <span>
+            <label for="microsSelector">Choose a mic:</label>
+            <select name="microsSelector" id="microsSelector"></select>
+          </span>
+          <span>
+            <label for="speakersSelector">Choose speakers:</label>
+            <select name="speakersSelector" id="speakersSelector"></select>
+          </span>
+        </div>
       </div>
 
       <div id="acsZone">
         <span id="initialize-call-agent">Initializing call agent...</span>
         <div id="acsVideoZone">
-          <span>Enter callee's id or Teams meeting link</span>
-          <input id="callee-acs-user-id"
-              type="text"
-              placeholder="'user@github, user@twitter, email or teams.microsoft.com meeting link'" />
+          <div id="calleesZone">
+            <div id="personOrTeamsLink">
+              <label for="callee-acs-user-id">Enter callee's id or Teams meeting link</label>
+              <input id="callee-acs-user-id"
+                  type="text"
+                  placeholder="'user@github, user@twitter, email or teams.microsoft.com meeting link'" />
+            </div>
+            <div id="echoBotZone">
+              <input type="checkbox" id="callEchoBot" name="callEchoBot">
+              <label for="callEchoBot">Call echobot</label>
+            </div>
+          </div>
           <p>Call state <span style="font-weight: bold" id="call-state">-</span></p>
 
           <div id="buttonsZone">
@@ -55,5 +73,4 @@
 
     <script src="./bundle.js"></script>
 </body>
-
 </html>
