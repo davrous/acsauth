@@ -22,7 +22,7 @@ let selectedCameraIndex = 0;
 let ACSUser;
 let authUserEmail = "";
 
-// UI widgets
+// HTML UI widgets
 let calleeAcsUserId = document.getElementById('callee-acs-user-id');
 let startCallButton = document.getElementById('start-call-button');
 let hangUpCallButton = document.getElementById('hangup-call-button');
@@ -39,12 +39,21 @@ let camerasSelector = document.getElementById('camerasSelector');
 let microsSelector = document.getElementById('microsSelector');
 let speakersSelector = document.getElementById('speakersSelector');
 
-// 3D
+// Used by the 3D part
 let canvas = document.getElementById("renderCanvas");
 let engine = null;
 let scene = null;
 let sceneToRender = null;
 let panel;
+let inCall = false;
+let incoming = false;
+let videoFullPlane;
+let videoOnControllerPlane;
+let leftControllerMesh;
+let videoOnController = false;
+let teamsCallButton;
+let teamsPlane;
+const frameRate = 60;
 
 // Simple function to check if the user has logged in or not yet
 async function getUserInfo() {
@@ -59,19 +68,25 @@ async function getUserInfo() {
     }
 }
 
+// Calling the API to just try to resolve an email with an existing ACS User ID created
 async function getUserAcsId(userEmail) {
     try {
-        // Calling the API to just try to resolve an email with an existing ACS User ID created
-        const response = await fetch('/api/users/' + userEmail + '/true');
-        const payload = await response.json();
-        const { userId } = payload;
-        return userId;
+        if (userEmail && userEmail != "") {
+            const response = await fetch('/api/users/' + userEmail + '/true');
+            const payload = await response.json();
+            const { userId } = payload;
+            return userId;
+        }
+        else {
+            return undefined;
+        }
     } catch (error) {
-        console.error('No Acs User Id has been found for this email.');
+        console.error('No Acs User Id has been found for: ' + userEmail);
         return undefined;
     }
 }
 
+// Executing code now
 (async function() {
     function registerLoginRouter(button, provider) {
         button.addEventListener("click", () => { 
@@ -128,6 +143,7 @@ async function getUserAcsId(userEmail) {
     }
 }())
 
+// Used to fill the cameras, microphones & speakers selectors
 function fillSelector(devices, selector) {
     devices.forEach((device, index) => {
         selector.add(createOptionElement(device.name, index));
@@ -179,6 +195,9 @@ async function initializeCallAgent() {
                 incomingCall = args.incomingCall;
                 acceptCallButton.disabled = false;
                 startCallButton.disabled = true;
+                teamsCallButton.textBlock.text = "Accept Call";
+                callStateElement.innerText = "Incoming call";
+                incoming = true;
             } catch (error) {
                 console.error(error);
             }
@@ -190,15 +209,27 @@ async function initializeCallAgent() {
     }
 }
 
-/**
- * Place a 1:1 outgoing video call to a user
- * Add an event listener to initiate a call when the `startCallButton` is clicked:
- * First you have to enumerate local cameras using the deviceManager `getCameraList` API.
- * In this quickstart we're using the first camera in the collection. Once the desired camera is selected, a
- * LocalVideoStream instance will be constructed and passed within `videoOptions` as an item within the
- * localVideoStream array to the call method. Once your call connects it will automatically start sending a video stream to the other participant. 
- */
-startCallButton.onclick = async () => {
+startCallButton.addEventListener("click", manageCall);
+hangUpCallButton.addEventListener("click", stopCall);
+acceptCallButton.addEventListener("click", manageCall);
+
+async function manageCall() {
+    if (!inCall) {
+        inCall = true;
+        if (incoming) {
+            await acceptCall();
+        }
+        else {
+            await startCall();
+        }
+    }
+    else {
+        await stopCall();
+        inCall = false;
+    }
+}
+
+async function startCall() {
     try {
         const localVideoStream = await createLocalVideoStream();
         const videoOptions = localVideoStream ? { localVideoStreams: [localVideoStream] } : undefined;
@@ -214,7 +245,9 @@ startCallButton.onclick = async () => {
                 call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });  
             }
             else {
-                console.error("No ACS User Id found for: " + meetingLink);
+                console.error('No Acs User Id has been found for: ' + meetingLink);
+                inCall = false;
+                incoming = false;
             }
         }
         // Subscribe to the call's properties and events.
@@ -222,17 +255,13 @@ startCallButton.onclick = async () => {
             subscribeToCall(call);
         }
     } catch (error) {
+        inCall = false;
+        incoming = false;
         console.error(error);
     }
 }
 
-/**
- * Accepting an incoming call with video
- * Add an event listener to accept a call when the `acceptCallButton` is clicked:
- * After subscrigin to the `CallAgent.on('incomingCall')` event, you can accept the incoming call.
- * You can pass the local video stream which you want to use to accept the call with.
- */
-acceptCallButton.onclick = async () => {
+async function acceptCall() {
     try {
         const localVideoStream = await createLocalVideoStream();
         const videoOptions = localVideoStream ? { localVideoStreams: [localVideoStream] } : undefined;
@@ -242,6 +271,10 @@ acceptCallButton.onclick = async () => {
     } catch (error) {
         console.error(error);
     }
+}
+
+async function stopCall() {
+    await call.hangUp();
 }
 
 // Subscribe to a call obj.
@@ -263,7 +296,11 @@ subscribeToCall = (call) => {
             callStateElement.innerText = call.state;
             teamsCallButton.textBlock.text = call.state;
             if(call.state === 'Connected') {
-                callReady();
+                // Switching the 3D elements states in the Scene
+                scene.stopAnimation(teamsPlane);
+                teamsPlane.setEnabled(false);
+                videoFullPlane.setEnabled(true);
+                // HTML elements
                 acceptCallButton.disabled = true;
                 startCallButton.disabled = true;
                 hangUpCallButton.disabled = false;
@@ -271,12 +308,22 @@ subscribeToCall = (call) => {
                 stopVideoButton.disabled = false;
                 teamsCallButton.textBlock.text = "Hang up";
             } else if (call.state === 'Disconnected') {
+                incoming = false;
+                inCall = false;
+                // Switching the 3D elements states in the Scene
+                teamsCallButton.textBlock.text = "Call";
+                scene.beginAnimation(teamsPlane, 0, frameRate, true, 0.1);
+                teamsPlane.setEnabled(true);
+                videoFullPlane.setEnabled(false);
+                videoOnControllerPlane.setEnabled(false);
+                videoOnController = false;
+                // HTML elements
+                callStateElement.innerText = '-';
                 startCallButton.disabled = false;
                 hangUpCallButton.disabled = true;
                 startVideoButton.disabled = true;
                 stopVideoButton.disabled = true;
                 console.log(`Call ended, call end reason={code=${call.callEndReason.code}, subCode=${call.callEndReason.subCode}}`);
-                teamsCallButton.textBlock.text = "Call";
             }   
         });
 
@@ -439,13 +486,6 @@ removeLocalVideoStream = async() => {
     } 
 }
 
-// End the current call
-hangUpCallButton.addEventListener("click", async () => {
-    // end the current call
-    await call.hangUp();
-    callStateElement.innerText = '-';
-});
-
 function makeVideoTexture(videoElement) {
     var videoPlaneMat = new BABYLON.StandardMaterial("m", scene);
     var videoTexture = new BABYLON.VideoTexture("vidtex",videoElement, scene);
@@ -456,27 +496,11 @@ function makeVideoTexture(videoElement) {
     videoFullPlane.material = videoPlaneMat;
 }
 
-function callReady() {
-    //teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/hangupiconMDL2.png";
-    scene.stopAnimation(teamsPlane);
-    teamsPlane.setEnabled(false);
-    videoFullPlane.setEnabled(true);
-}
-
-var inCall = false;
-var videoFullPlane;
-var videoOnControllerPlane;
-var leftControllerMesh;
-var videoOnController = false;
-var teamsCallButton;
-var teamsPlane;
-
 // Babylon.js WebGL code. Creating the scene, loading the helmet mesh.
 // Activating the render loop with an auto animated camera.
 let createScene = function() {
     // Playground needs to return at least an empty scene and default camera
     var scene = new BABYLON.Scene(engine);
-    //var environment = scene.createDefaultEnvironment();
     // This creates and positions a free camera (non-mesh)
     var camera = new BABYLON.UniversalCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
 
@@ -546,28 +570,11 @@ let createScene = function() {
             teamsCallButton.textBlock.paddingBottom = "20%";
             advancedTexture.addControl(teamsCallButton);
       
-            teamsCallButton.onPointerUpObservable.add(async function(){
-                if (!inCall) {
-                    inCall = true;
-                    await startCallButton.onclick();
-                }
-                else {
-                    await call.hangUp();
-                    inCall = false;
-                    teamsCallButton.textBlock.text = "Call";
-                    //teamsCallButton.imageUrl = "https://david.blob.core.windows.net/acs/calliconMDL2.png";
-                    scene.beginAnimation(teamsPlane, 0, frameRate, true, 0.1);
-                    teamsPlane.setEnabled(true);
-                    videoFullPlane.setEnabled(false);
-                    videoOnControllerPlane.setEnabled(false);
-                    videoOnController = false;
-                }
-            });
+            teamsCallButton.onPointerUpObservable.add(manageCall);
 
             scene.activeCamera.attachControl(canvas, false);
             camera = scene.activeCamera;
 
-            // Add controllers to shadow.
             xr.input.onControllerAddedObservable.add((controller) => {
                 controller.onMotionControllerInitObservable.add((motionController) => {
                     if (motionController.handness === 'left') {                       
@@ -606,7 +613,6 @@ let createScene = function() {
                 });
             });
 
-            const frameRate = 60;
             const teamsRotation = new BABYLON.Animation("teamsRotation", "rotation.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
             const keyFrames = []; 
 
@@ -645,6 +651,8 @@ initializeBabylonEngine = function() {
     });
 };
 
+// Mock getUserMedia to return the 3D Canvas rendering stream
+// Instead of the camera video feed
 (function() {
     navigator.mediaDevices.realGUM = navigator.mediaDevices.getUserMedia;
 
@@ -670,50 +678,4 @@ initializeBabylonEngine = function() {
     }
 
     navigator.mediaDevices.getUserMedia = fakeGUM;
-})();
-
-(function() {
-    navigator.mediaDevices.realED = navigator.mediaDevices.enumerateDevices;
-
-    let fakeInputDeviceInfo = {
-        deviceId: "f5d701eaf8e36daf5bf28b679d4d59f37e80477dcf19c96a6c95metaversecam", 
-        groupId:  "34d24946002876bfd3996a03b0c9469da5a9a59310b5520fffeemetaversecam",
-        kind: "videoinput",
-        label: "Metaverse Camera"
-    };
-
-    fakeInputDeviceInfo.getCapabilities = function () {
-        debugger;
-        return {
-            deviceId: this.deviceId,
-            groupId: this.groupId,
-            aspectRatio: 1.77,
-            frameRate: 30,
-            width: 1066,
-            height: 600,
-            facingMode: [],
-            resizeMode: ["none"]
-        }
-    };
-
-    function fakeED() { 
-      return new Promise(function(resolve, reject) {
-          try {
-              console.log("Into enumerateDevices.");
-              navigator.mediaDevices.realED().then((devices) => {
-                  console.log("Devices found.");
-                  if (devices) {
-                      //devices.push(fakeInputDeviceInfo);
-                       console.dir(devices);
-                  }
-                  resolve(devices);
-                });
-          } catch (e) {
-              console.log(e);
-              reject(e);
-          }
-        });
-    }
-
-    navigator.mediaDevices.enumerateDevices = fakeED;
 })();
