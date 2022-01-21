@@ -144,6 +144,48 @@ function createOptionElement(text, value) {
     return option;
 }
 
+
+async function fillDevicesSelectors() {
+    try {
+        localCameras = await deviceManager.getCameras();
+        if (localCameras) {
+            fillSelector(localCameras, camerasSelector);
+            camerasSelector.addEventListener("change", (event) => {
+                selectedCameraIndex = event.target.value;
+            });
+        }
+    }
+    catch (error) {
+        console.warn("This device doesn't support cameras enumeration.");
+    }
+
+    try {
+        localMicrophones = await deviceManager.getMicrophones();    
+        if (localMicrophones) {
+            fillSelector(localMicrophones, microsSelector, deviceManager.selectMicrophone);
+            microsSelector.addEventListener("change", async (event) => {
+                await deviceManager.selectMicrophone(localMicrophones[event.target.value]);
+            });
+        }
+    }
+    catch (error) {
+        console.warn("This device doesn't support microphones enumeration.");
+    }
+    
+    try {
+        localSpeakers = await deviceManager.getSpeakers();
+        if (localSpeakers) {
+            fillSelector(localSpeakers, speakersSelector, deviceManager.selectSpeaker);
+            speakersSelector.addEventListener("change", async (event) => {
+                await deviceManager.selectSpeaker(localSpeakers[event.target.value]);
+            });
+        }
+    }
+    catch (error) {
+        console.warn("This device doesn't support speakers enumeration.");
+    }
+}
+
 /**
  * Using the CallClient, initialize a CallAgent instance with a CommunicationUserCredential which will enable us to make outgoing calls and receive incoming calls. 
  * You can then use the CallClient.getDeviceManager() API instance to get the DeviceManager.
@@ -156,32 +198,10 @@ async function initializeCallAgent() {
         callAgent = await callClient.createCallAgent(tokenCredential, {displayName: 'ACS:' + authUserEmail})
         // Set up a camera device to use.
         deviceManager = await callClient.getDeviceManager();
-        localCameras = await deviceManager.getCameras();
-        localMicrophones = await deviceManager.getMicrophones();
-        try {
-            localSpeakers = await deviceManager.getSpeakers();
-        }
-        catch (error) {
-            console.warn("This device doesn't support speakers enumeration.");
-        }
-
-        fillSelector(localCameras, camerasSelector);
-        camerasSelector.addEventListener("change", (event) => {
-            selectedCameraIndex = event.target.value;
-        });
-
-        fillSelector(localMicrophones, microsSelector);
-        microsSelector.addEventListener("change", async (event) => {
-            await deviceManager.selectMicrophone(localMicrophones[event.target.value]);
-        });
-
-        fillSelector(localSpeakers, speakersSelector);
-        speakersSelector.addEventListener("change", async (event) => {
-            await deviceManager.selectSpeaker(localSpeakers[event.target.value]);
-        });
-
         await deviceManager.askDevicePermission({ video: true });
         await deviceManager.askDevicePermission({ audio: true });
+        await fillDevicesSelectors();
+
         // Listen for an incoming call to accept.
         callAgent.on('incomingCall', async (args) => {
             try {
