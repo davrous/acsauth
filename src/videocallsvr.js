@@ -170,7 +170,12 @@ async function initializeCallAgent() {
         deviceManager = await callClient.getDeviceManager();
         localCameras = await deviceManager.getCameras();
         localMicrophones = await deviceManager.getMicrophones();
-        localSpeakers = await deviceManager.getSpeakers();
+        try {
+            localSpeakers = await deviceManager.getSpeakers();
+        }
+        catch (error) {
+            console.warn("This device doesn't support speakers enumeration.");
+        }
 
         fillSelector(localCameras, camerasSelector);
         camerasSelector.addEventListener("change", (event) => {
