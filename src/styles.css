@@ -20,6 +20,12 @@ main {
   max-width: 500px;
 }
 
+#user-access-token {
+  width: 100%;
+  margin: 5px;
+  max-width: 500px;
+}
+
 #buttonsZone {
   display: flex;
 }

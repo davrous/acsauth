@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>ACS Starting sample</title>
+</head>
+
+<body>
+    <main>
+      <h1>Azure Communication Services & Starting sample</h1>
+      <div id="loginZone">
+        <label for="user-access-token">Enter ACS user access token</label>
+        <input id="user-access-token"
+              type="text"
+              placeholder="User access token" />
+        <button id="btnInitializeACS">Initialize ACS agent</button>
+      </div>
+      <div id="logoutZone">
+        <div id="selectors">
+          <span>
+            <label for="camerasSelector">Choose a camera:</label>
+            <select name="camerasSelector" id="camerasSelector"></select>
+          </span>
+          <span>
+            <label for="microsSelector">Choose a mic:</label>
+            <select name="microsSelector" id="microsSelector"></select>
+          </span>
+          <span>
+            <label for="speakersSelector">Choose speakers:</label>
+            <select name="speakersSelector" id="speakersSelector"></select>
+          </span>
+        </div>
+      </div>
+
+      <div id="acsZone">
+        <span id="initialize-call-agent">Please initialize ACS Agent by providing a valid ACS token (can be found in Azure Portal)</span>
+        <div id="acsVideoZone">
+          <div id="calleesZone">
+            <div id="personOrTeamsLink">
+              <label for="callee-acs-user-id">Enter ACS user identity</label>
+              <input id="callee-acs-user-id"
+                  type="text"
+                  placeholder="Enter callee's ACS user identity in format: '8:acs:resourceId_userId'" />
+            </div>
+            <div id="echoBotZone">
+              <input type="checkbox" id="callEchoBot" name="callEchoBot">
+              <label for="callEchoBot">Call echobot</label>
+            </div>
+          </div>
+          <p>Call state <span style="font-weight: bold" id="call-state">-</span></p>
+
+          <div id="buttonsZone">
+            <button id="start-call-button" type="button" disabled="true">Start Call</button>
+            <button id="hangup-call-button" type="button" disabled="true">Hang up Call</button>
+            <button id="accept-call-button" type="button" disabled="true">Accept Call</button>
+            <button id="start-video-button" type="button" disabled="true">Start Video</button>
+            <button id="stop-video-button" type="button" disabled="true">Stop Video</button>
+          </div>
+          <div id="videosZone">
+            <div id="remoteVideoContainer">Remote participants' video streams:</div>
+            <div id="localVideoContainer">Local video stream:</div>
+           </div>
+        <div>
+      </div>
+    </main>
+
+    <script src="./bundlestarting.js"></script>
+</body>
+</html>
