@@ -79,7 +79,6 @@ function createOptionElement(text, value) {
     return option;
 }
 
-
 async function fillDevicesSelectors() {
     try {
         localCameras = await deviceManager.getCameras();
@@ -167,18 +166,24 @@ startCallButton.onclick = async () => {
     try {
         const localVideoStream = await createLocalVideoStream();
         const videoOptions = localVideoStream ? { localVideoStreams: [localVideoStream] } : undefined;
-        let AcsUserId = calleeAcsUserId.value.trim();
+        let meetingLink = calleeAcsUserId.value.trim();
         // Easy way to do a first check that your ACS setup works ok
         // Let's call the echo bot
         if (callEchoBot.checked) {
             call = callAgent.startCall([{ id: '8:echo123' }], { videoOptions });  
         }
         else {
-            if (AcsUserId) {
-                call = callAgent.startCall([{ communicationUserId: AcsUserId }], { videoOptions });  
+            if (meetingLink.includes("teams.microsoft.com")) {
+                // join with meeting link
+                call = callAgent.join({meetingLink: meetingLink}, { videoOptions });
             }
             else {
-                console.warn("Please provide a valid ACS User Id or use the echobot.");
+                if (meetingLink) {
+                    call = callAgent.startCall([{ communicationUserId: meetingLink }], { videoOptions });  
+                }
+                else {
+                    console.warn("Please provide a valid ACS User Id or use the echobot.");
+                }
             }
         }
         // Subscribe to the call's properties and events.
