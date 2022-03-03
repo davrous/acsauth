@@ -10,8 +10,8 @@ This repo is used as a starter for a _very basic_ HTML web application using no 
 
 ### via Azure Portal
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facstest%2Fmain%2Finfra%2Fmain.bicep%3Ftoken%3DGHSAT0AAAAAABOYV4LKDCRMDJB2FIQ7DLGCYRA422A)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facstest%2Fmain%2Finfra%2Fmain.bicep%3Ftoken%3DGHSAT0AAAAAABOYV4LKDCRMDJB2FIQ7DLGCYRA422A)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facstest%2Fmain%2Finfra%2Fmain.bicep)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facstest%2Fmain%2Finfra%2Fmain.bicep)
 
 
 ### via PowerShell
