@@ -21,7 +21,9 @@ param cosdbaPrimaryRegion string = 'West US 2'
     'EnableServerless'
     'EnableTable'
 ])
-param cosdbaCapability string = 'EnableServerless'
+param cosdbaCapabilities array = [
+    'EnableServerless'
+]
 
 @allowed([
     'Local'
@@ -30,6 +32,21 @@ param cosdbaCapability string = 'EnableServerless'
 ])
 param cosdbaBackupStorageRedundancy string = 'Local'
 
+param cosdbaDatabaseName string = 'ACS'
+param cosdbaContainerName string = 'users'
+param cosdbaPartitionKeyPaths array = [
+    '/id'
+]
+
+var capabilities = [for capability in cosdbaCapabilities: {
+    name: capability
+}]
+
+var isCosdbaCassandra = contains(cosdbaCapabilities, 'EnableCassandra')
+var isCosdbaGremlin = contains(cosdbaCapabilities, 'EnableGremlin')
+var isCosdbaTable = contains(cosdbaCapabilities, 'EnableTable')
+var isCosdbaSql = !isCosdbaCassandra && !isCosdbaGremlin && !isCosdbaTable
+
 var cosmosDb = {
     name: 'cosdba-${name}'
     location: cosdbaLocation
@@ -37,8 +54,11 @@ var cosmosDb = {
     enableAutomaticFailover: cosdbaAutomaticFailover
     defaultConsistencyLevel: cosdbaConsistencyLevel
     primaryRegion: cosdbaPrimaryRegion
-    capability: cosdbaCapability
+    capabilities: capabilities
     backupStorageRedundancy: cosdbaBackupStorageRedundancy
+    databaseName: cosdbaDatabaseName
+    containerName: cosdbaContainerName
+    partitionKeyPaths: cosdbaPartitionKeyPaths
 }
 
 resource cosdba 'Microsoft.DocumentDB/databaseAccounts@2021-10-15' = {
@@ -60,11 +80,7 @@ resource cosdba 'Microsoft.DocumentDB/databaseAccounts@2021-10-15' = {
                 isZoneRedundant: false
             }
         ]
-        capabilities: [
-            {
-                name: cosmosDb.capability
-            }
-        ]
+        capabilities: cosmosDb.capabilities
         backupPolicy: {
             type: 'Periodic'
             periodicModeProperties: {
@@ -75,6 +91,30 @@ resource cosdba 'Microsoft.DocumentDB/databaseAccounts@2021-10-15' = {
         }
     }
 }
+
+resource cosdbasql 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2021-10-15' = if (isCosdbaSql) {
+    name: '${cosdba.name}/${cosmosDb.databaseName}'
+    properties: {
+        resource: {
+            id: cosmosDb.databaseName
+        }
+    }
+}
+
+resource cosdbasqlcontainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2021-10-15' = if (isCosdbaSql) {
+    name: '${cosdbasql.name}/${cosmosDb.containerName}'
+    properties: {
+        resource: {
+            id: cosmosDb.containerName
+            partitionKey: {
+                paths: cosmosDb.partitionKeyPaths
+            }
+        }
+    }
+}
+
+
+
 
 output id string = cosdba.id
 output name string = cosdba.name

@@ -19,7 +19,9 @@ param cosdbaPrimaryRegion string = 'West US 2'
     'EnableServerless'
     'EnableTable'
 ])
-param cosdbaCapability string = 'EnableServerless'
+param cosdbaCapabilities array = [
+    'EnableServerless'
+]
 @allowed([
     'Local'
     'Zone'
@@ -72,7 +74,7 @@ module cosdba './cosmosDb.bicep' = {
         cosdbaAutomaticFailover: cosdbaAutomaticFailover
         cosdbaConsistencyLevel: cosdbaConsistencyLevel
         cosdbaPrimaryRegion: cosdbaPrimaryRegion
-        cosdbaCapability: cosdbaCapability
+        cosdbaCapabilities: cosdbaCapabilities
         cosdbaBackupStorageRedundancy: cosdbaBackupStorageRedundancy
     }
 }

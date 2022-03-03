@@ -2,7 +2,11 @@
 Param(
     [string]
     [Parameter(Mandatory=$false)]
-    $Name = "",
+    $ResourceGroupName = "",
+
+    [string]
+    [Parameter(Mandatory=$false)]
+    $ResourceName = "",
 
     [string]
     [Parameter(Mandatory=$false)]
@@ -26,10 +30,10 @@ Param(
     [Parameter(Mandatory=$false)]
     $CosmosDbPrimaryRegion = "Korea Central",
 
-    [string]
+    [array]
     [Parameter(Mandatory=$false)]
     [ValidateSet("EnableCassandra", "EnableGremlin", "EnableServerless", "EnableTable")]
-    $CosmosDbCapability = "EnableServerless",
+    $CosmosDbCapabilities = @("EnableServerless"),
 
     [string]
     [Parameter(Mandatory=$false)]
@@ -85,14 +89,15 @@ function Show-Usage {
     Write-Output "    This provisions resources to Azure
 
     Usage: $(Split-Path $MyInvocation.ScriptName -Leaf) ``
-            -Name <resource name> ``
+            -ResourceGroupName <resource group name> ``
+            -ResourceName <resource name> ``
             [-Location <location>] ``
 
             [-CosmosDbAccountOfferType <Cosmos DB account type>] ``
             [-CosmosDbAutomaticFailover <`$true|`$false>] ``
             [-CosmosDbConsistencyLevel <Cosmos DB consistency level>] ``
             [-CosmosDbPrimaryRegion <Cosmos DB primary region>] ``
-            [-CosmosDbCapability <Cosmos DB capability>] ``
+            [-CosmosDbCapabilities <Cosmos DB capabilities>] ``
             [-CosmosDbBackupStorageRedundancy <Cosmos DB backup storage redundancy>] ``
 
             [-CommunicationServiceDataLocation <Data location for Communication Services> ``
@@ -108,7 +113,11 @@ function Show-Usage {
             [-Help]
 
     Options:
-        -Name                             Resource name.
+        -ResourceGroupName                Resource group name.
+                                          Default is empty string.
+                                          But if -TargetScope is ResourceGroup,
+                                          it must be specified.
+        -ResourceName                     Resource name.
         -Location                         Resource location.
                                           Default is 'koreacentral'.
 
@@ -120,8 +129,8 @@ function Show-Usage {
                                           Default is 'Session'.
         -CosmosDbPrimaryRegion            Cosmos DB primary region.
                                           Default is 'Korea Central'.
-        -CosmosDbCapability               Cosmos DB capability.
-                                          Default is 'EnableServerless'.
+        -CosmosDbCapabilities             Cosmos DB capabilities.
+                                          Default is @('EnableServerless').
         -CosmosDbBackupStorageRedundancy  Cosmos DB backup storage redundancy.
                                           Default is 'Local'.
 
@@ -148,7 +157,13 @@ function Show-Usage {
 }
 
 # Show usage
-$needHelp = ($Name -eq "") -or ($Help -eq $true)
+$needHelp = ($ResourceName -eq "") -or ($Help -eq $true)
+if ($needHelp -eq $true) {
+    Show-Usage
+    Exit 0
+}
+
+$needHelp = ($TargetScope -eq "ResourceGroup") -and ($ResourceGroupName -eq "")
 if ($needHelp -eq $true) {
     Show-Usage
     Exit 0
@@ -156,13 +171,13 @@ if ($needHelp -eq $true) {
 
 # Build parameters
 $params = @{
-    name = @{ value = $Name };
+    name = @{ value = $ResourceName };
 
     cosdbaAccountOfferType = @{ value = $CosmosDbAccountOfferType };
     cosdbaAutomaticFailover = @{ value = $CosmosDbAutomaticFailover };
     cosdbaConsistencyLevel = @{ value = $CosmosDbConsistencyLevel };
     cosdbaPrimaryRegion = @{ value = $CosmosDbPrimaryRegion };
-    cosdbaCapability = @{ value = $CosmosDbCapability };
+    cosdbaCapabilities = @{ value = $CosmosDbCapabilities };
     cosdbaBackupStorageRedundancy = @{ value = $CosmosDbBackupStorageRedundancy };
 
     acsvcDataLocation = @{ value = $CommunicationServiceDataLocation };
