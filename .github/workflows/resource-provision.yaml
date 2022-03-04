@@ -48,11 +48,11 @@ jobs:
         cd ./infra
 
         $result = ./Provision-Resources.ps1 `
-          -ResourceName ${{ inputs.resource_name}} `
-          -Location ${{ inputs.cosdba_location }} `
-          -CosmosDbPrimaryRegion ${{ inputs.cosdba_location }} `
-          -CommunicationServiceDataLocation ${{ inputs.acsvc_location }} `
-          -StaticWebAppLocation ${{ inputs.sttapp_location }} `
+          -ResourceName "${{ inputs.resource_name}}" `
+          -Location "${{ inputs.cosdba_location }}" `
+          -CosmosDbPrimaryRegion "${{ inputs.cosdba_location }}" `
+          -CommunicationServiceDataLocation "${{ inputs.acsvc_location }}" `
+          -StaticWebAppLocation "${{ inputs.sttapp_location }}" `
           -TargetScope Subscription
 
         $provisioned = $result | ConvertFrom-Json
