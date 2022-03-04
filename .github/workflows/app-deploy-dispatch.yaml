@@ -10,15 +10,18 @@ on:
       appLocation:
         type: string
         description: Web app location
-        required: true
+        required: false
+        default: "app"
       apiLocation:
         type: string
         description: API app location
-        required: true
+        required: false
+        default: "api"
       outputLocation:
         type: string
         description: Web app artifact location
-        required: true
+        required: false
+        default: ""
 
 jobs:
   call_app_deploy:
