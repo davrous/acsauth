@@ -57,6 +57,8 @@ jobs:
 
         $provisioned = $result | ConvertFrom-Json
 
+        echo $provisioned.properties.outputs.sttappDeploymentKey.value
+
         echo "::set-output name=sttapp_deploymentkey::$provisioned.properties.outputs.sttappDeploymentKey.value"
 
     - name: Update GitHub repository secrets
