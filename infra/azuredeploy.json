@@ -1,0 +1,766 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1272.37030",
+      "templateHash": "7864175447690573746"
+    }
+  },
+  "parameters": {
+    "name": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "cosdbaAccountOfferType": {
+      "type": "string",
+      "defaultValue": "Standard"
+    },
+    "cosdbaAutomaticFailover": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "cosdbaConsistencyLevel": {
+      "type": "string",
+      "defaultValue": "Session",
+      "allowedValues": [
+        "Strong",
+        "BoundedStaleness",
+        "Session",
+        "ConsistentPrefix",
+        "Eventual"
+      ]
+    },
+    "cosdbaPrimaryRegion": {
+      "type": "string",
+      "defaultValue": "West US 2"
+    },
+    "cosdbaCapabilities": {
+      "type": "array",
+      "defaultValue": [
+        "EnableServerless"
+      ],
+      "allowedValues": [
+        "EnableCassandra",
+        "EnableGremlin",
+        "EnableServerless",
+        "EnableTable"
+      ]
+    },
+    "cosdbaBackupStorageRedundancy": {
+      "type": "string",
+      "defaultValue": "Local",
+      "allowedValues": [
+        "Local",
+        "Zone",
+        "Geo"
+      ]
+    },
+    "acsvcDataLocation": {
+      "type": "string",
+      "defaultValue": "Korea",
+      "allowedValues": [
+        "Africa",
+        "Asia Pacific",
+        "Australia",
+        "Brazil",
+        "Canada",
+        "Europe",
+        "France",
+        "Germany",
+        "India",
+        "Japan",
+        "Korea",
+        "United Kingdom",
+        "United States"
+      ]
+    },
+    "sttappLocation": {
+      "type": "string",
+      "defaultValue": "eastasia",
+      "allowedValues": [
+        "centralus",
+        "eastus2",
+        "eastasia",
+        "westeurope",
+        "westus2"
+      ]
+    },
+    "sttappSkuName": {
+      "type": "string",
+      "defaultValue": "Free"
+    },
+    "sttappAllowConfigFileUpdates": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "sttappStagingEnvironmentPolicy": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ]
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2021-04-01",
+      "name": "[format('rg-{0}', parameters('name'))]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "Resources",
+      "resourceGroup": "[format('rg-{0}', parameters('name'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[parameters('name')]"
+          },
+          "cosdbaLocation": {
+            "value": "[reference(subscriptionResourceId('Microsoft.Resources/resourceGroups', format('rg-{0}', parameters('name'))), '2021-04-01', 'full').location]"
+          },
+          "cosdbaAccountOfferType": {
+            "value": "[parameters('cosdbaAccountOfferType')]"
+          },
+          "cosdbaAutomaticFailover": {
+            "value": "[parameters('cosdbaAutomaticFailover')]"
+          },
+          "cosdbaConsistencyLevel": {
+            "value": "[parameters('cosdbaConsistencyLevel')]"
+          },
+          "cosdbaPrimaryRegion": {
+            "value": "[parameters('cosdbaPrimaryRegion')]"
+          },
+          "cosdbaCapabilities": {
+            "value": "[parameters('cosdbaCapabilities')]"
+          },
+          "cosdbaBackupStorageRedundancy": {
+            "value": "[parameters('cosdbaBackupStorageRedundancy')]"
+          },
+          "acsvcDataLocation": {
+            "value": "[parameters('acsvcDataLocation')]"
+          },
+          "sttappLocation": {
+            "value": "[parameters('sttappLocation')]"
+          },
+          "sttappSkuName": {
+            "value": "[parameters('sttappSkuName')]"
+          },
+          "sttappAllowConfigFileUpdates": {
+            "value": "[parameters('sttappAllowConfigFileUpdates')]"
+          },
+          "sttappStagingEnvironmentPolicy": {
+            "value": "[parameters('sttappStagingEnvironmentPolicy')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "6843177413342695058"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string"
+            },
+            "cosdbaLocation": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "cosdbaAccountOfferType": {
+              "type": "string",
+              "defaultValue": "Standard"
+            },
+            "cosdbaAutomaticFailover": {
+              "type": "bool",
+              "defaultValue": true
+            },
+            "cosdbaConsistencyLevel": {
+              "type": "string",
+              "defaultValue": "Session",
+              "allowedValues": [
+                "Strong",
+                "BoundedStaleness",
+                "Session",
+                "ConsistentPrefix",
+                "Eventual"
+              ]
+            },
+            "cosdbaPrimaryRegion": {
+              "type": "string",
+              "defaultValue": "West US 2"
+            },
+            "cosdbaCapabilities": {
+              "type": "array",
+              "defaultValue": [
+                "EnableServerless"
+              ],
+              "allowedValues": [
+                "EnableCassandra",
+                "EnableGremlin",
+                "EnableServerless",
+                "EnableTable"
+              ]
+            },
+            "cosdbaBackupStorageRedundancy": {
+              "type": "string",
+              "defaultValue": "Local",
+              "allowedValues": [
+                "Local",
+                "Zone",
+                "Geo"
+              ]
+            },
+            "acsvcDataLocation": {
+              "type": "string",
+              "defaultValue": "Korea",
+              "allowedValues": [
+                "Africa",
+                "Asia Pacific",
+                "Australia",
+                "Brazil",
+                "Canada",
+                "Europe",
+                "France",
+                "Germany",
+                "India",
+                "Japan",
+                "Korea",
+                "United Kingdom",
+                "United States"
+              ]
+            },
+            "sttappLocation": {
+              "type": "string",
+              "defaultValue": "eastasia",
+              "allowedValues": [
+                "centralus",
+                "eastus2",
+                "eastasia",
+                "westeurope",
+                "westus2"
+              ]
+            },
+            "sttappSkuName": {
+              "type": "string",
+              "defaultValue": "Free"
+            },
+            "sttappAllowConfigFileUpdates": {
+              "type": "bool",
+              "defaultValue": true
+            },
+            "sttappStagingEnvironmentPolicy": {
+              "type": "string",
+              "defaultValue": "Enabled",
+              "allowedValues": [
+                "Disabled",
+                "Enabled"
+              ]
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "CosmosDB",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "name": {
+                    "value": "[parameters('name')]"
+                  },
+                  "cosdbaLocation": {
+                    "value": "[parameters('cosdbaLocation')]"
+                  },
+                  "cosdbaAccountOfferType": {
+                    "value": "[parameters('cosdbaAccountOfferType')]"
+                  },
+                  "cosdbaAutomaticFailover": {
+                    "value": "[parameters('cosdbaAutomaticFailover')]"
+                  },
+                  "cosdbaConsistencyLevel": {
+                    "value": "[parameters('cosdbaConsistencyLevel')]"
+                  },
+                  "cosdbaPrimaryRegion": {
+                    "value": "[parameters('cosdbaPrimaryRegion')]"
+                  },
+                  "cosdbaCapabilities": {
+                    "value": "[parameters('cosdbaCapabilities')]"
+                  },
+                  "cosdbaBackupStorageRedundancy": {
+                    "value": "[parameters('cosdbaBackupStorageRedundancy')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.4.1272.37030",
+                      "templateHash": "7403098403576972559"
+                    }
+                  },
+                  "parameters": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "cosdbaLocation": {
+                      "type": "string",
+                      "defaultValue": "[resourceGroup().location]"
+                    },
+                    "cosdbaAccountOfferType": {
+                      "type": "string",
+                      "defaultValue": "Standard"
+                    },
+                    "cosdbaAutomaticFailover": {
+                      "type": "bool",
+                      "defaultValue": true
+                    },
+                    "cosdbaConsistencyLevel": {
+                      "type": "string",
+                      "defaultValue": "Session",
+                      "allowedValues": [
+                        "Strong",
+                        "BoundedStaleness",
+                        "Session",
+                        "ConsistentPrefix",
+                        "Eventual"
+                      ]
+                    },
+                    "cosdbaPrimaryRegion": {
+                      "type": "string",
+                      "defaultValue": "West US 2"
+                    },
+                    "cosdbaCapabilities": {
+                      "type": "array",
+                      "defaultValue": [
+                        "EnableServerless"
+                      ],
+                      "allowedValues": [
+                        "EnableCassandra",
+                        "EnableGremlin",
+                        "EnableServerless",
+                        "EnableTable"
+                      ]
+                    },
+                    "cosdbaBackupStorageRedundancy": {
+                      "type": "string",
+                      "defaultValue": "Local",
+                      "allowedValues": [
+                        "Local",
+                        "Zone",
+                        "Geo"
+                      ]
+                    },
+                    "cosdbaDatabaseName": {
+                      "type": "string",
+                      "defaultValue": "ACS"
+                    },
+                    "cosdbaContainerName": {
+                      "type": "string",
+                      "defaultValue": "users"
+                    },
+                    "cosdbaPartitionKeyPaths": {
+                      "type": "array",
+                      "defaultValue": [
+                        "/id"
+                      ]
+                    }
+                  },
+                  "variables": {
+                    "copy": [
+                      {
+                        "name": "capabilities",
+                        "count": "[length(parameters('cosdbaCapabilities'))]",
+                        "input": {
+                          "name": "[parameters('cosdbaCapabilities')[copyIndex('capabilities')]]"
+                        }
+                      }
+                    ],
+                    "isCosdbaCassandra": "[contains(parameters('cosdbaCapabilities'), 'EnableCassandra')]",
+                    "isCosdbaGremlin": "[contains(parameters('cosdbaCapabilities'), 'EnableGremlin')]",
+                    "isCosdbaTable": "[contains(parameters('cosdbaCapabilities'), 'EnableTable')]",
+                    "isCosdbaSql": "[and(and(not(variables('isCosdbaCassandra')), not(variables('isCosdbaGremlin'))), not(variables('isCosdbaTable')))]",
+                    "cosmosDb": {
+                      "name": "[format('cosdba-{0}', parameters('name'))]",
+                      "location": "[parameters('cosdbaLocation')]",
+                      "databaseAccountOfferType": "[parameters('cosdbaAccountOfferType')]",
+                      "enableAutomaticFailover": "[parameters('cosdbaAutomaticFailover')]",
+                      "defaultConsistencyLevel": "[parameters('cosdbaConsistencyLevel')]",
+                      "primaryRegion": "[parameters('cosdbaPrimaryRegion')]",
+                      "capabilities": "[variables('capabilities')]",
+                      "backupStorageRedundancy": "[parameters('cosdbaBackupStorageRedundancy')]",
+                      "databaseName": "[parameters('cosdbaDatabaseName')]",
+                      "containerName": "[parameters('cosdbaContainerName')]",
+                      "partitionKeyPaths": "[parameters('cosdbaPartitionKeyPaths')]"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.DocumentDB/databaseAccounts",
+                      "apiVersion": "2021-10-15",
+                      "name": "[variables('cosmosDb').name]",
+                      "location": "[variables('cosmosDb').location]",
+                      "kind": "GlobalDocumentDB",
+                      "properties": {
+                        "databaseAccountOfferType": "[variables('cosmosDb').databaseAccountOfferType]",
+                        "enableAutomaticFailover": "[variables('cosmosDb').enableAutomaticFailover]",
+                        "consistencyPolicy": {
+                          "defaultConsistencyLevel": "[variables('cosmosDb').defaultConsistencyLevel]",
+                          "maxIntervalInSeconds": 5,
+                          "maxStalenessPrefix": 100
+                        },
+                        "locations": [
+                          {
+                            "locationName": "[variables('cosmosDb').primaryRegion]",
+                            "failoverPriority": 0,
+                            "isZoneRedundant": false
+                          }
+                        ],
+                        "capabilities": "[variables('cosmosDb').capabilities]",
+                        "backupPolicy": {
+                          "type": "Periodic",
+                          "periodicModeProperties": {
+                            "backupIntervalInMinutes": 240,
+                            "backupRetentionIntervalInHours": 8,
+                            "backupStorageRedundancy": "[variables('cosmosDb').backupStorageRedundancy]"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "condition": "[variables('isCosdbaSql')]",
+                      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+                      "apiVersion": "2021-10-15",
+                      "name": "[format('{0}/{1}', variables('cosmosDb').name, variables('cosmosDb').databaseName)]",
+                      "properties": {
+                        "resource": {
+                          "id": "[variables('cosmosDb').databaseName]"
+                        }
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDb').name)]"
+                      ]
+                    },
+                    {
+                      "condition": "[variables('isCosdbaSql')]",
+                      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+                      "apiVersion": "2021-10-15",
+                      "name": "[format('{0}/{1}', format('{0}/{1}', variables('cosmosDb').name, variables('cosmosDb').databaseName), variables('cosmosDb').containerName)]",
+                      "properties": {
+                        "resource": {
+                          "id": "[variables('cosmosDb').containerName]",
+                          "partitionKey": {
+                            "paths": "[variables('cosmosDb').partitionKeyPaths]"
+                          }
+                        }
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', split(format('{0}/{1}', variables('cosmosDb').name, variables('cosmosDb').databaseName), '/')[0], split(format('{0}/{1}', variables('cosmosDb').name, variables('cosmosDb').databaseName), '/')[1])]"
+                      ]
+                    }
+                  ],
+                  "outputs": {
+                    "id": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDb').name)]"
+                    },
+                    "name": {
+                      "type": "string",
+                      "value": "[variables('cosmosDb').name]"
+                    },
+                    "connectionString": {
+                      "type": "string",
+                      "value": "[format('AccountEndpoint=https://{0}.documents.azure.com:443/;AccountKey={1};', variables('cosmosDb').name, listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDb').name), '2021-10-15').primaryMasterKey)]"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "CommunicationServices",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "name": {
+                    "value": "[parameters('name')]"
+                  },
+                  "acsvcDataLocation": {
+                    "value": "[parameters('acsvcDataLocation')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.4.1272.37030",
+                      "templateHash": "931333458372122921"
+                    }
+                  },
+                  "parameters": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "acsvcDataLocation": {
+                      "type": "string",
+                      "defaultValue": "Korea",
+                      "allowedValues": [
+                        "Africa",
+                        "Asia Pacific",
+                        "Australia",
+                        "Brazil",
+                        "Canada",
+                        "Europe",
+                        "France",
+                        "Germany",
+                        "India",
+                        "Japan",
+                        "Korea",
+                        "United Kingdom",
+                        "United States"
+                      ]
+                    }
+                  },
+                  "variables": {
+                    "commService": {
+                      "name": "[format('acsvc-{0}', parameters('name'))]",
+                      "location": "global",
+                      "dataLocation": "[parameters('acsvcDataLocation')]"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Communication/communicationServices",
+                      "apiVersion": "2020-08-20",
+                      "name": "[variables('commService').name]",
+                      "location": "[variables('commService').location]",
+                      "properties": {
+                        "dataLocation": "[variables('commService').dataLocation]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "id": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Communication/communicationServices', variables('commService').name)]"
+                    },
+                    "name": {
+                      "type": "string",
+                      "value": "[variables('commService').name]"
+                    },
+                    "connectionString": {
+                      "type": "string",
+                      "value": "[listKeys(resourceId('Microsoft.Communication/communicationServices', variables('commService').name), '2020-08-20').primaryConnectionString]"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "StaticWebApp",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "name": {
+                    "value": "[parameters('name')]"
+                  },
+                  "sttappLocation": {
+                    "value": "[parameters('sttappLocation')]"
+                  },
+                  "sttappSkuName": {
+                    "value": "[parameters('sttappSkuName')]"
+                  },
+                  "sttappAllowConfigFileUpdates": {
+                    "value": "[parameters('sttappAllowConfigFileUpdates')]"
+                  },
+                  "sttappStagingEnvironmentPolicy": {
+                    "value": "[parameters('sttappStagingEnvironmentPolicy')]"
+                  },
+                  "acsvcConnectionString": {
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', 'CommunicationServices')).outputs.connectionString.value]"
+                  },
+                  "cosdbaConnectionString": {
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', 'CosmosDB')).outputs.connectionString.value]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.4.1272.37030",
+                      "templateHash": "11078623753735335969"
+                    }
+                  },
+                  "parameters": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "sttappLocation": {
+                      "type": "string",
+                      "defaultValue": "eastasia",
+                      "allowedValues": [
+                        "centralus",
+                        "eastus2",
+                        "eastasia",
+                        "westeurope",
+                        "westus2"
+                      ]
+                    },
+                    "sttappSkuName": {
+                      "type": "string",
+                      "defaultValue": "Free",
+                      "allowedValues": [
+                        "Free",
+                        "Standard"
+                      ]
+                    },
+                    "sttappAllowConfigFileUpdates": {
+                      "type": "bool",
+                      "defaultValue": true
+                    },
+                    "sttappStagingEnvironmentPolicy": {
+                      "type": "string",
+                      "defaultValue": "Enabled",
+                      "allowedValues": [
+                        "Disabled",
+                        "Enabled"
+                      ]
+                    },
+                    "acsvcConnectionString": {
+                      "type": "secureString"
+                    },
+                    "cosdbaConnectionString": {
+                      "type": "secureString"
+                    }
+                  },
+                  "variables": {
+                    "staticApp": {
+                      "name": "[format('sttapp-{0}', parameters('name'))]",
+                      "location": "[parameters('sttappLocation')]",
+                      "skuName": "[parameters('sttappSkuName')]",
+                      "allowConfigFileUpdates": "[parameters('sttappAllowConfigFileUpdates')]",
+                      "stagingEnvironmentPolicy": "[parameters('sttappStagingEnvironmentPolicy')]",
+                      "connectionStrings": {
+                        "acs": "[parameters('acsvcConnectionString')]",
+                        "cosmosDb": "[parameters('cosdbaConnectionString')]"
+                      }
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Web/staticSites",
+                      "apiVersion": "2021-03-01",
+                      "name": "[variables('staticApp').name]",
+                      "location": "[variables('staticApp').location]",
+                      "sku": {
+                        "name": "[variables('staticApp').skuName]"
+                      },
+                      "properties": {
+                        "allowConfigFileUpdates": "[variables('staticApp').allowConfigFileUpdates]",
+                        "stagingEnvironmentPolicy": "[variables('staticApp').stagingEnvironmentPolicy]"
+                      }
+                    },
+                    {
+                      "type": "Microsoft.Web/staticSites/config",
+                      "apiVersion": "2021-03-01",
+                      "name": "[format('{0}/appsettings', variables('staticApp').name)]",
+                      "properties": {
+                        "ACS_ConnectionString": "[variables('staticApp').connectionStrings.acs]",
+                        "MyAccount_COSMOSDB": "[variables('staticApp').connectionStrings.cosmosDb]"
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.Web/staticSites', variables('staticApp').name)]"
+                      ]
+                    }
+                  ],
+                  "outputs": {
+                    "id": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Web/staticSites', variables('staticApp').name)]"
+                    },
+                    "name": {
+                      "type": "string",
+                      "value": "[variables('staticApp').name]"
+                    },
+                    "deploymentKey": {
+                      "type": "string",
+                      "value": "[listSecrets(resourceId('Microsoft.Web/staticSites', variables('staticApp').name), '2021-03-01').properties.apiKey]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'CommunicationServices')]",
+                "[resourceId('Microsoft.Resources/deployments', 'CosmosDB')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "cosdbaConnectionString": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', 'CosmosDB')).outputs.connectionString.value]"
+            },
+            "acsvcConnectionString": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', 'CommunicationServices')).outputs.connectionString.value]"
+            },
+            "sttappDeploymentKey": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', 'StaticWebApp')).outputs.deploymentKey.value]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('rg-{0}', parameters('name')))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "cosdbaConnectionString": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-{0}', parameters('name'))), 'Microsoft.Resources/deployments', 'Resources')).outputs.cosdbaConnectionString.value]"
+    },
+    "acsvcConnectionString": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-{0}', parameters('name'))), 'Microsoft.Resources/deployments', 'Resources')).outputs.acsvcConnectionString.value]"
+    },
+    "sttappDeploymentKey": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-{0}', parameters('name'))), 'Microsoft.Resources/deployments', 'Resources')).outputs.sttappDeploymentKey.value]"
+    }
+  }
+}

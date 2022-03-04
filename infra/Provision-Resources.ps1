@@ -207,12 +207,12 @@ if ($WhatIf -eq $true) {
 
     if ($TargetScope -eq "ResourceGroup") {
         az deployment group create -g $ResourceGroupName -n $TargetScope `
-            -f ./azuredeploy.bicep `
+            -f ./main.bicep `
             -p $stringified `
             -w
     } else {
         az deployment sub create -l $Location -n $TargetScope `
-            -f ./main.bicep `
+            -f ./azuredeploy.bicep `
             -p $stringified `
             -w
     }
@@ -222,12 +222,12 @@ if ($WhatIf -eq $true) {
 
     if ($TargetScope -eq "ResourceGroup") {
         az deployment group create -g $ResourceGroupName -n $TargetScope `
-            -f ./azuredeploy.bicep `
+            -f ./main.bicep `
             -p $stringified `
             --verbose
     } else {
         az deployment sub create -l $Location -n $TargetScope `
-            -f ./main.bicep `
+            -f ./azuredeploy.bicep `
             -p $stringified `
             --verbose
     }
