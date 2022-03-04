@@ -27,8 +27,7 @@ $appLocation = "<static_app_location>"
     -Location $location `
     -CosmosDbPrimaryRegion $location `
     -CommunicationServiceDataLocation $dataLocation `
-    -StaticWebAppLocation $appLocation `
-    -TargetScope Subscription
+    -StaticWebAppLocation $appLocation
 ```
 
 
@@ -53,7 +52,18 @@ az deployment sub create \
 ```
 
 
-## TO-DO
+### via GitHub Actions Workflow
 
-* GitHub Actions workflow integration
-* devcontainer integration
+![GitHub Action Workflow Manual Trigger](./images/gha.png)
+
+1. Go to the ["Actions"](/davrous/acsauth/actions) tab.
+2. Click the ["Resource Provision & App Deploy](/davrous/acsauth/actions/workflows/provision.yaml) tab.
+3. Click the "Run workflow" button.
+4. Enter the resource name into the "Resource name" field.
+5. Select the Cosmos DB location. Default is "Korea Central".
+6. Select the Azure Communication Services data location. Default is "Korea".
+7. Select the Static Web App location. Default is "East Asia".
+8. Click the "Run workflow" button.
+
+Once completed, you will see the Azure Static Web App is up and running.
+

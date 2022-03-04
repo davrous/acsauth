@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "12446031021315893558"
+      "templateHash": "14725715832211217714"
     }
   },
   "parameters": {
@@ -18,7 +18,10 @@
     },
     "cosdbaAccountOfferType": {
       "type": "string",
-      "defaultValue": "Standard"
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard"
+      ]
     },
     "cosdbaAutomaticFailover": {
       "type": "bool",
@@ -73,13 +76,13 @@
     },
     "sttappLocation": {
       "type": "string",
-      "defaultValue": "eastasia",
+      "defaultValue": "East Asia",
       "allowedValues": [
-        "centralus",
-        "eastus2",
-        "eastasia",
-        "westeurope",
-        "westus2"
+        "Central US",
+        "East Asia",
+        "East US 2",
+        "West Europe",
+        "West US 2"
       ]
     },
     "sttappSkuName": {
@@ -142,7 +145,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "18373121230679841672"
+              "templateHash": "5995196354923220389"
             }
           },
           "parameters": {
@@ -155,7 +158,10 @@
             },
             "cosdbaAccountOfferType": {
               "type": "string",
-              "defaultValue": "Standard"
+              "defaultValue": "Standard",
+              "allowedValues": [
+                "Standard"
+              ]
             },
             "cosdbaAutomaticFailover": {
               "type": "bool",
@@ -425,7 +431,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "11078623753735335969"
+              "templateHash": "14989187034094535271"
             }
           },
           "parameters": {
@@ -434,13 +440,13 @@
             },
             "sttappLocation": {
               "type": "string",
-              "defaultValue": "eastasia",
+              "defaultValue": "East Asia",
               "allowedValues": [
-                "centralus",
-                "eastus2",
-                "eastasia",
-                "westeurope",
-                "westus2"
+                "Central US",
+                "East Asia",
+                "East US 2",
+                "West Europe",
+                "West US 2"
               ]
             },
             "sttappSkuName": {

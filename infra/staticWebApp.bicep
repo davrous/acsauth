@@ -1,13 +1,13 @@
 param name string
 
 @allowed([
-    'centralus'
-    'eastus2'
-    'eastasia'
-    'westeurope'
-    'westus2'
+    'Central US'
+    'East Asia'
+    'East US 2'
+    'West Europe'
+    'West US 2'
 ])
-param sttappLocation string = 'eastasia'
+param sttappLocation string = 'East Asia'
 
 @allowed([
     'Free'

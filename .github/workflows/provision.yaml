@@ -8,10 +8,47 @@ on:
         description: 'Resource name'
         required: true
       location:
-        type: string
-        description: 'Cosmos DB location. Default is "koreacentral"'
+        type: choice
+        description: 'Cosmos DB location. Default is "Korea Central"'
         required: false
-        default: 'koreacentral'
+        options:
+        - 'Australia Central'
+        - 'Australia East'
+        - 'Australia Southeast'
+        - 'Brazil South'
+        - 'Canada Central'
+        - 'Canada East'
+        - 'Central India'
+        - 'Central US'
+        - 'East Asia'
+        - 'East US'
+        - 'East US 2'
+        - 'France Central'
+        - 'Germany West Central'
+        - 'Japan East'
+        - 'Japan West'
+        - 'Jio India West'
+        - 'Korea Central'
+        - 'Korea South'
+        - 'North Central US'
+        - 'North Europe'
+        - 'Norway East'
+        - 'South Africa North'
+        - 'South Central US'
+        - 'South India'
+        - 'Southeast Asia'
+        - 'Sweden Central'
+        - 'Switzerland North'
+        - 'UAE North'
+        - 'UK South'
+        - 'UK West'
+        - 'West Central US'
+        - 'West Europe'
+        - 'West India'
+        - 'West US'
+        - 'West US 2'
+        - 'West US 3'
+        default: 'Korea Central'
       communicationServiceDataLocation:
         type: choice
         description: 'Data location for Communication Services. Default is "Korea".'
@@ -33,15 +70,15 @@ on:
         default: 'Korea'
       staticWebAppLocation:
         type: choice
-        description: 'Static Web App location. Default is "eastasia".'
+        description: 'Static Web App location. Default is "East Asia".'
         required: false
         options:
-        - "centralus"
-        - "eastus2"
-        - "eastasia"
-        - "westeurope"
-        - "westus2"
-        default: 'eastasia'
+        - 'Central US'
+        - 'East Asia'
+        - 'East US 2'
+        - 'West Europe'
+        - 'West US 2'
+        default: 'East Asia'
 
 jobs:
   call_resource_provisioning:

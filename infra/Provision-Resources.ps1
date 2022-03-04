@@ -10,7 +10,8 @@ Param(
 
     [string]
     [Parameter(Mandatory=$false)]
-    $Location = "koreacentral",
+    [ValidateSet("Australia Central", "Australia East", "Australia Southeast", "Brazil South", "Canada Central", "Canada East", "Central India", "Central US", "East Asia", "East US", "East US 2", "France Central", "Germany West Central", "Japan East", "Japan West", "Jio India West", "Korea Central", "Korea South", "North Central US", "North Europe", "Norway East", "South Africa North", "South Central US", "South India", "Southeast Asia", "Sweden Central", "Switzerland North", "UAE North", "UK South", "UK West", "West Central US", "West Europe", "West India", "West US", "West US 2", "West US 3")]
+    $Location = "Korea Central",
 
     ### Cosmos DB ###
     [string]
@@ -29,6 +30,7 @@ Param(
 
     [string]
     [Parameter(Mandatory=$false)]
+    [ValidateSet("Australia Central", "Australia East", "Australia Southeast", "Brazil South", "Canada Central", "Canada East", "Central India", "Central US", "East Asia", "East US", "East US 2", "France Central", "Germany West Central", "Japan East", "Japan West", "Jio India West", "Korea Central", "Korea South", "North Central US", "North Europe", "Norway East", "South Africa North", "South Central US", "South India", "Southeast Asia", "Sweden Central", "Switzerland North", "UAE North", "UK South", "UK West", "West Central US", "West Europe", "West India", "West US", "West US 2", "West US 3")]
     $CosmosDbPrimaryRegion = "Korea Central",
 
     [bool]
@@ -51,8 +53,8 @@ Param(
     ### Static Web App ###
     [string]
     [Parameter(Mandatory=$false)]
-    [ValidateSet("centralus", "eastus2", "eastasia", "westeurope", "westus2")]
-    $StaticWebAppLocation = "eastasia",
+    [ValidateSet("Central US", "East Asia", "East US 2", "West Europe", "West US 2")]
+    $StaticWebAppLocation = "East Asia",
 
     [string]
     [Parameter(Mandatory=$false)]
