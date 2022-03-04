@@ -4,6 +4,9 @@ param name string
 param location string = 'koreacentral'
 
 // Cosmos DB
+@allowed([
+    'Standard'
+])
 param cosdbaAccountOfferType string = 'Standard'
 param cosdbaAutomaticFailover bool = true
 @allowed([

@@ -1,4 +1,4 @@
-# Provisions resources based on Flags
+# Provisions resources
 Param(
     [string]
     [Parameter(Mandatory=$false)]
@@ -15,6 +15,7 @@ Param(
     ### Cosmos DB ###
     [string]
     [Parameter(Mandatory=$false)]
+    [ValidateSet("Standard")]
     $CosmosDbAccountOfferType = "Standard",
 
     [bool]
@@ -72,7 +73,7 @@ Param(
     [string]
     [Parameter(Mandatory=$false)]
     [ValidateSet("ResourceGroup", "Subscription")]
-    $TargetScope = "ResourceGroup",
+    $TargetScope = "Subscription",
     ### Target Scope ###
 
     [switch]
@@ -136,7 +137,7 @@ function Show-Usage {
         -CommunicationServiceDataLocation Data location for Communication Services.
                                           Default is 'Korea'.
 
-        -StaticWebAppLocation             Static Web App location>
+        -StaticWebAppLocation             Static Web App location.
                                           Default is 'eastasia'.
         -StaticWebAppSkuName              Static Web App SKU name.
                                           Default is 'Free'.
@@ -202,34 +203,30 @@ $stringified = $params | ConvertTo-Json -Compress | ConvertTo-Json
 
 # Provision the resources
 if ($WhatIf -eq $true) {
-    Write-Output "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Provisioning resources as a test ..."
-
     if ($TargetScope -eq "ResourceGroup") {
-        az deployment group create -g $ResourceGroupName -n $TargetScope `
+        $result = az deployment group create -g $ResourceGroupName -n $TargetScope `
             -f ./main.bicep `
             -p $stringified `
             -w
     } else {
-        az deployment sub create -l $Location -n $TargetScope `
+        $result = az deployment sub create -l $Location -n $TargetScope `
             -f ./azuredeploy.bicep `
             -p $stringified `
             -w
     }
 
 } else {
-    Write-Output "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Provisioning resources ..."
-
     if ($TargetScope -eq "ResourceGroup") {
-        az deployment group create -g $ResourceGroupName -n $TargetScope `
+        $result = az deployment group create -g $ResourceGroupName -n $TargetScope `
             -f ./main.bicep `
             -p $stringified `
             --verbose
     } else {
-        az deployment sub create -l $Location -n $TargetScope `
+        $result = az deployment sub create -l $Location -n $TargetScope `
             -f ./azuredeploy.bicep `
             -p $stringified `
             --verbose
     }
-
-    Write-Output "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Resources have been provisioned"
 }
+
+$result

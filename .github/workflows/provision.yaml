@@ -1,0 +1,68 @@
+name: 'Resource Provisioning'
+
+on:
+  workflow_dispatch:
+    inputs:
+      resourceName:
+        type: string
+        description: 'Resource name'
+        required: true
+      location:
+        type: string
+        description: 'Cosmos DB location. Default is "koreacentral"'
+        required: false
+        default: 'koreacentral'
+      communicationServiceDataLocation:
+        type: choice
+        description: 'Data location for Communication Services. Default is "Korea".'
+        required: false
+        options:
+        - "Africa"
+        - "Asia Pacific"
+        - "Australia"
+        - "Brazil"
+        - "Canada"
+        - "Europe"
+        - "France"
+        - "Germany"
+        - "India"
+        - "Japan"
+        - "Korea"
+        - "United Kingdom"
+        - "United States"
+        default: 'Korea'
+      staticWebAppLocation:
+        type: choice
+        description: 'Static Web App location. Default is "eastasia".'
+        required: false
+        options:
+        - "centralus"
+        - "eastus2"
+        - "eastasia"
+        - "westeurope"
+        - "westus2"
+        default: 'eastasia'
+
+jobs:
+  call_resource_provisioning:
+    uses: justinyoo/acsauth/.github/workflows/resource-provision.yaml@main
+    with:
+      job_name: 'Deploy Static Web App'
+      resource_name: ${{ inputs.resourceName }}
+      cosdba_location: ${{ inputs.location }}
+      acsvc_location:  ${{ inputs.communicationServiceDataLocation }}
+      sttapp_location:  ${{ inputs.staticWebAppLocation }}
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+
+  call_app_deploy:
+    needs: call_resource_provisioning
+    uses: justinyoo/acsauth/.github/workflows/app-deploy.yaml@main
+    with:
+      job_name: 'Deploy Static Web App'
+      app_location: 'src'
+      api_location: 'api'
+      output_location: ''
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      aswa_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}'

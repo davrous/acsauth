@@ -1,6 +1,9 @@
 param name string
 param cosdbaLocation string = resourceGroup().location
 
+@allowed([
+    'Standard'
+])
 param cosdbaAccountOfferType string = 'Standard'
 param cosdbaAutomaticFailover bool = true
 

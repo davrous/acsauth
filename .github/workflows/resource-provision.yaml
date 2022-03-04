@@ -1,0 +1,60 @@
+name: 'Resource Provision'
+
+on:
+  workflow_call:
+    inputs:
+      job_name:
+        type: string
+        required: true
+      resource_name:
+        type: string
+        required: true
+      cosdba_location:
+        type: string
+        required: true
+      acsvc_location:
+        type: string
+        required: true
+      sttapp_location:
+        type: string
+        required: true
+    secrets:
+      gh_token:
+        required: true
+
+jobs:
+  deploy:
+    name: ${{ inputs.job_name }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repo
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Provision resources
+      id: provisioned
+      shell: pwsh
+      run: |
+        cd ./infra
+
+        $result = ./Provision-Resources.ps1 `
+          -ResourceName ${{ inputs.resource_name}} `
+          -Location ${{ inputs.cosdba_location }} `
+          -CosmosDbPrimaryRegion ${{ inputs.cosdba_location }} `
+          -CommunicationServiceDataLocation ${{ inputs.acsvc_location }} `
+          -StaticWebAppLocation ${{ inputs.sttapp_location }} `
+          -TargetScope Subscription
+
+        $provisioned = $result | ConvertFrom-Json
+
+        echo "::set-output name=sttapp_deploymentkey::$provisioned.properties.outputs.sttappDeploymentKey.value"
+
+    - name: Update GitHub repository secrets
+      uses: gliech/create-github-secret-action@v1
+      with:
+        pa_token: ${{ secrets.gh_token }}
+        name: AZURE_STATIC_WEB_APPS_API_TOKEN
+        value: ${{ steps.provisioned.outputs.sttapp_deploymentkey }}
