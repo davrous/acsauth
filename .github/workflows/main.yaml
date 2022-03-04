@@ -1,4 +1,4 @@
-name: 'Static Web App Deploy'
+name: 'App Deploy'
 
 on:
   push:

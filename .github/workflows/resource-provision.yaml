@@ -19,7 +19,7 @@ on:
         type: string
         required: true
     secrets:
-      gh_token:
+      pa_token:
         required: true
       az_credentials:
         required: true
@@ -62,6 +62,6 @@ jobs:
     - name: Update GitHub repository secrets
       uses: gliech/create-github-secret-action@v1
       with:
-        pa_token: ${{ secrets.gh_token }}
+        pa_token: ${{ secrets.pa_token }}
         name: AZURE_STATIC_WEB_APPS_API_TOKEN
         value: ${{ steps.provisioned.outputs.sttapp_deploymentkey }}
