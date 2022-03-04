@@ -103,6 +103,6 @@ jobs:
     - name: Invoke workflow with inputs
       uses: benc-uk/workflow-dispatch@v1
       with:
-        workflow: app-deploy-dispatch.yaml
+        workflow: 'App Deploy Dispatch'
         token: ${{ secrets.PA_TOKEN }}
         inputs: '{ "jobName": "Deploy Static Web App", "appLocation": "src", "apiLocation": "api", "outputLocation": "" }'
