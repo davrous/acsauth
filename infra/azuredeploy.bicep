@@ -1,7 +1,7 @@
 targetScope = 'subscription'
 
 param name string
-param location string
+param location string = 'koreacentral'
 
 // Cosmos DB
 param cosdbaAccountOfferType string = 'Standard'
@@ -14,16 +14,8 @@ param cosdbaAutomaticFailover bool = true
     'Eventual'
 ])
 param cosdbaConsistencyLevel string = 'Session'
-param cosdbaPrimaryRegion string = 'West US 2'
-@allowed([
-    'EnableCassandra'
-    'EnableGremlin'
-    'EnableServerless'
-    'EnableTable'
-])
-param cosdbaCapabilities array = [
-    'EnableServerless'
-]
+param cosdbaPrimaryRegion string = 'koreacentral'
+param cosdbaEnableServerless bool = true
 @allowed([
     'Local'
     'Zone'
@@ -83,7 +75,7 @@ module resources './main.bicep' = {
         cosdbaAutomaticFailover: cosdbaAutomaticFailover
         cosdbaConsistencyLevel: cosdbaConsistencyLevel
         cosdbaPrimaryRegion: cosdbaPrimaryRegion
-        cosdbaCapabilities: cosdbaCapabilities
+        cosdbaEnableServerless: cosdbaEnableServerless
         cosdbaBackupStorageRedundancy: cosdbaBackupStorageRedundancy
 
         acsvcDataLocation: acsvcDataLocation
