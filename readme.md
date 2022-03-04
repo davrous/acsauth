@@ -10,8 +10,8 @@ This repo is used as a starter for a _very basic_ HTML web application using no 
 
 ### via Azure Portal
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facstest%2Fmain%2Finfra%2Fmain.bicep)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facstest%2Fmain%2Finfra%2Fmain.bicep)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json)
 
 
 ### via PowerShell
@@ -43,7 +43,7 @@ appLocation=<static_app_location>
 az deployment sub create \
     -l $location \
     -n Subscription \
-    -f ./infra/main.bicep \
+    -f ./infra/azuredeploy.bicep \
     -p name=$resourceName \
     -p location=$location \
     -p cosdbaPrimaryRegion=$location \

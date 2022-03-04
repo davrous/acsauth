@@ -1,7 +1,9 @@
+targetScope = 'subscription'
+
 param name string
+param location string
 
 // Cosmos DB
-param cosdbaLocation string = resourceGroup().location
 param cosdbaAccountOfferType string = 'Standard'
 param cosdbaAutomaticFailover bool = true
 @allowed([
@@ -65,41 +67,34 @@ param sttappAllowConfigFileUpdates bool = true
 ])
 param sttappStagingEnvironmentPolicy string = 'Enabled'
 
-module cosdba './cosmosDb.bicep' = {
-    name: 'CosmosDB'
+resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+    name: 'rg-${name}'
+    location: location
+}
+
+module resources './main.bicep' = {
+    name: 'Resources'
+    scope: rg
     params: {
         name: name
-        cosdbaLocation: cosdbaLocation
+
+        cosdbaLocation: rg.location
         cosdbaAccountOfferType: cosdbaAccountOfferType
         cosdbaAutomaticFailover: cosdbaAutomaticFailover
         cosdbaConsistencyLevel: cosdbaConsistencyLevel
         cosdbaPrimaryRegion: cosdbaPrimaryRegion
         cosdbaCapabilities: cosdbaCapabilities
         cosdbaBackupStorageRedundancy: cosdbaBackupStorageRedundancy
-    }
-}
 
-module acsvc './communicationServices.bicep' = {
-    name: 'CommunicationServices'
-    params: {
-        name: name
         acsvcDataLocation: acsvcDataLocation
-    }
-}
 
-module sttapp './staticWebApp.bicep' = {
-    name: 'StaticWebApp'
-    params: {
-        name: name
         sttappLocation: sttappLocation
         sttappSkuName: sttappSkuName
         sttappAllowConfigFileUpdates: sttappAllowConfigFileUpdates
         sttappStagingEnvironmentPolicy: sttappStagingEnvironmentPolicy
-        acsvcConnectionString: acsvc.outputs.connectionString
-        cosdbaConnectionString: cosdba.outputs.connectionString
     }
 }
 
-output cosdbaConnectionString string = cosdba.outputs.connectionString
-output acsvcConnectionString string = acsvc.outputs.connectionString
-output sttappDeploymentKey string = sttapp.outputs.deploymentKey
+output cosdbaConnectionString string = resources.outputs.cosdbaConnectionString
+output acsvcConnectionString string = resources.outputs.acsvcConnectionString
+output sttappDeploymentKey string = resources.outputs.sttappDeploymentKey
