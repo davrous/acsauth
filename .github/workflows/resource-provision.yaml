@@ -21,6 +21,8 @@ on:
     secrets:
       gh_token:
         required: true
+      az_credentials:
+        required: true
 
 jobs:
   deploy:
@@ -33,6 +35,11 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: true
+
+    - name: Login to Azure
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.az_credentials }}
 
     - name: Provision resources
       id: provisioned
