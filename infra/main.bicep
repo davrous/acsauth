@@ -12,16 +12,8 @@ param cosdbaAutomaticFailover bool = true
     'Eventual'
 ])
 param cosdbaConsistencyLevel string = 'Session'
-param cosdbaPrimaryRegion string = 'West US 2'
-@allowed([
-    'EnableCassandra'
-    'EnableGremlin'
-    'EnableServerless'
-    'EnableTable'
-])
-param cosdbaCapabilities array = [
-    'EnableServerless'
-]
+param cosdbaPrimaryRegion string = resourceGroup().location
+param cosdbaEnableServerless bool = true
 @allowed([
     'Local'
     'Zone'
@@ -74,7 +66,7 @@ module cosdba './cosmosDb.bicep' = {
         cosdbaAutomaticFailover: cosdbaAutomaticFailover
         cosdbaConsistencyLevel: cosdbaConsistencyLevel
         cosdbaPrimaryRegion: cosdbaPrimaryRegion
-        cosdbaCapabilities: cosdbaCapabilities
+        cosdbaEnableServerless: cosdbaEnableServerless
         cosdbaBackupStorageRedundancy: cosdbaBackupStorageRedundancy
     }
 }

@@ -13,17 +13,8 @@ param cosdbaAutomaticFailover bool = true
 ])
 param cosdbaConsistencyLevel string = 'Session'
 
-param cosdbaPrimaryRegion string = 'West US 2'
-
-@allowed([
-    'EnableCassandra'
-    'EnableGremlin'
-    'EnableServerless'
-    'EnableTable'
-])
-param cosdbaCapabilities array = [
-    'EnableServerless'
-]
+param cosdbaPrimaryRegion string = resourceGroup().location
+param cosdbaEnableServerless bool = true
 
 @allowed([
     'Local'
@@ -38,14 +29,11 @@ param cosdbaPartitionKeyPaths array = [
     '/id'
 ]
 
-var capabilities = [for capability in cosdbaCapabilities: {
-    name: capability
-}]
-
-var isCosdbaCassandra = contains(cosdbaCapabilities, 'EnableCassandra')
-var isCosdbaGremlin = contains(cosdbaCapabilities, 'EnableGremlin')
-var isCosdbaTable = contains(cosdbaCapabilities, 'EnableTable')
-var isCosdbaSql = !isCosdbaCassandra && !isCosdbaGremlin && !isCosdbaTable
+var capabilities = cosdbaEnableServerless ? [
+    {
+        name: 'EnableServerless'
+    }
+] : []
 
 var cosmosDb = {
     name: 'cosdba-${name}'
@@ -92,7 +80,7 @@ resource cosdba 'Microsoft.DocumentDB/databaseAccounts@2021-10-15' = {
     }
 }
 
-resource cosdbasql 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2021-10-15' = if (isCosdbaSql) {
+resource cosdbasql 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2021-10-15' = {
     name: '${cosdba.name}/${cosmosDb.databaseName}'
     properties: {
         resource: {
@@ -101,7 +89,7 @@ resource cosdbasql 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2021-10-1
     }
 }
 
-resource cosdbasqlcontainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2021-10-15' = if (isCosdbaSql) {
+resource cosdbasqlcontainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2021-10-15' = {
     name: '${cosdbasql.name}/${cosmosDb.containerName}'
     properties: {
         resource: {
@@ -112,9 +100,6 @@ resource cosdbasqlcontainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/
         }
     }
 }
-
-
-
 
 output id string = cosdba.id
 output name string = cosdba.name

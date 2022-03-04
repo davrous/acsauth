@@ -30,10 +30,9 @@ Param(
     [Parameter(Mandatory=$false)]
     $CosmosDbPrimaryRegion = "Korea Central",
 
-    [array]
+    [bool]
     [Parameter(Mandatory=$false)]
-    [ValidateSet("EnableCassandra", "EnableGremlin", "EnableServerless", "EnableTable")]
-    $CosmosDbCapabilities = @("EnableServerless"),
+    $CosmosDbEnableServerless = $true,
 
     [string]
     [Parameter(Mandatory=$false)]
@@ -97,14 +96,14 @@ function Show-Usage {
             [-CosmosDbAutomaticFailover <`$true|`$false>] ``
             [-CosmosDbConsistencyLevel <Cosmos DB consistency level>] ``
             [-CosmosDbPrimaryRegion <Cosmos DB primary region>] ``
-            [-CosmosDbCapabilities <Cosmos DB capabilities>] ``
+            [-CosmosDbEnableServerless <`$true|`$false>] ``
             [-CosmosDbBackupStorageRedundancy <Cosmos DB backup storage redundancy>] ``
 
             [-CommunicationServiceDataLocation <Data location for Communication Services> ``
 
             [-StaticWebAppLocation <Static Web App location>] ``
             [-StaticWebAppSkuName <Static Web App SKU name>] ``
-            [-StaticWebAppAllowConfigFileUpdates <`$true|`$false>>] ``
+            [-StaticWebAppAllowConfigFileUpdates <`$true|`$false>] ``
             [-StaticWebAppStagingEnvironmentPolicy <Static Web App staging envronment policy>] ``
 
             [-TargetScope <Target scope>] ``
@@ -129,8 +128,8 @@ function Show-Usage {
                                           Default is 'Session'.
         -CosmosDbPrimaryRegion            Cosmos DB primary region.
                                           Default is 'Korea Central'.
-        -CosmosDbCapabilities             Cosmos DB capabilities.
-                                          Default is @('EnableServerless').
+        -CosmosDbEnableServerless         To enable serverless or not.
+                                          Default is `$true.
         -CosmosDbBackupStorageRedundancy  Cosmos DB backup storage redundancy.
                                           Default is 'Local'.
 
@@ -177,7 +176,7 @@ $params = @{
     cosdbaAutomaticFailover = @{ value = $CosmosDbAutomaticFailover };
     cosdbaConsistencyLevel = @{ value = $CosmosDbConsistencyLevel };
     cosdbaPrimaryRegion = @{ value = $CosmosDbPrimaryRegion };
-    cosdbaCapabilities = @{ value = $CosmosDbCapabilities };
+    cosdbaEnableServerless = @{ value = $CosmosDbEnableServerless };
     cosdbaBackupStorageRedundancy = @{ value = $CosmosDbBackupStorageRedundancy };
 
     acsvcDataLocation = @{ value = $CommunicationServiceDataLocation };

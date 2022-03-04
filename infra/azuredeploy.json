@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "7864175447690573746"
+      "templateHash": "16992407727513093806"
     }
   },
   "parameters": {
@@ -13,7 +13,8 @@
       "type": "string"
     },
     "location": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "koreacentral"
     },
     "cosdbaAccountOfferType": {
       "type": "string",
@@ -36,19 +37,11 @@
     },
     "cosdbaPrimaryRegion": {
       "type": "string",
-      "defaultValue": "West US 2"
+      "defaultValue": "koreacentral"
     },
-    "cosdbaCapabilities": {
-      "type": "array",
-      "defaultValue": [
-        "EnableServerless"
-      ],
-      "allowedValues": [
-        "EnableCassandra",
-        "EnableGremlin",
-        "EnableServerless",
-        "EnableTable"
-      ]
+    "cosdbaEnableServerless": {
+      "type": "bool",
+      "defaultValue": true
     },
     "cosdbaBackupStorageRedundancy": {
       "type": "string",
@@ -142,8 +135,8 @@
           "cosdbaPrimaryRegion": {
             "value": "[parameters('cosdbaPrimaryRegion')]"
           },
-          "cosdbaCapabilities": {
-            "value": "[parameters('cosdbaCapabilities')]"
+          "cosdbaEnableServerless": {
+            "value": "[parameters('cosdbaEnableServerless')]"
           },
           "cosdbaBackupStorageRedundancy": {
             "value": "[parameters('cosdbaBackupStorageRedundancy')]"
@@ -171,7 +164,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "6843177413342695058"
+              "templateHash": "12446031021315893558"
             }
           },
           "parameters": {
@@ -203,19 +196,11 @@
             },
             "cosdbaPrimaryRegion": {
               "type": "string",
-              "defaultValue": "West US 2"
+              "defaultValue": "[resourceGroup().location]"
             },
-            "cosdbaCapabilities": {
-              "type": "array",
-              "defaultValue": [
-                "EnableServerless"
-              ],
-              "allowedValues": [
-                "EnableCassandra",
-                "EnableGremlin",
-                "EnableServerless",
-                "EnableTable"
-              ]
+            "cosdbaEnableServerless": {
+              "type": "bool",
+              "defaultValue": true
             },
             "cosdbaBackupStorageRedundancy": {
               "type": "string",
@@ -302,8 +287,8 @@
                   "cosdbaPrimaryRegion": {
                     "value": "[parameters('cosdbaPrimaryRegion')]"
                   },
-                  "cosdbaCapabilities": {
-                    "value": "[parameters('cosdbaCapabilities')]"
+                  "cosdbaEnableServerless": {
+                    "value": "[parameters('cosdbaEnableServerless')]"
                   },
                   "cosdbaBackupStorageRedundancy": {
                     "value": "[parameters('cosdbaBackupStorageRedundancy')]"
@@ -316,7 +301,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.4.1272.37030",
-                      "templateHash": "7403098403576972559"
+                      "templateHash": "18373121230679841672"
                     }
                   },
                   "parameters": {
@@ -348,19 +333,11 @@
                     },
                     "cosdbaPrimaryRegion": {
                       "type": "string",
-                      "defaultValue": "West US 2"
+                      "defaultValue": "[resourceGroup().location]"
                     },
-                    "cosdbaCapabilities": {
-                      "type": "array",
-                      "defaultValue": [
-                        "EnableServerless"
-                      ],
-                      "allowedValues": [
-                        "EnableCassandra",
-                        "EnableGremlin",
-                        "EnableServerless",
-                        "EnableTable"
-                      ]
+                    "cosdbaEnableServerless": {
+                      "type": "bool",
+                      "defaultValue": true
                     },
                     "cosdbaBackupStorageRedundancy": {
                       "type": "string",
@@ -387,19 +364,7 @@
                     }
                   },
                   "variables": {
-                    "copy": [
-                      {
-                        "name": "capabilities",
-                        "count": "[length(parameters('cosdbaCapabilities'))]",
-                        "input": {
-                          "name": "[parameters('cosdbaCapabilities')[copyIndex('capabilities')]]"
-                        }
-                      }
-                    ],
-                    "isCosdbaCassandra": "[contains(parameters('cosdbaCapabilities'), 'EnableCassandra')]",
-                    "isCosdbaGremlin": "[contains(parameters('cosdbaCapabilities'), 'EnableGremlin')]",
-                    "isCosdbaTable": "[contains(parameters('cosdbaCapabilities'), 'EnableTable')]",
-                    "isCosdbaSql": "[and(and(not(variables('isCosdbaCassandra')), not(variables('isCosdbaGremlin'))), not(variables('isCosdbaTable')))]",
+                    "capabilities": "[if(parameters('cosdbaEnableServerless'), createArray(createObject('name', 'EnableServerless')), createArray())]",
                     "cosmosDb": {
                       "name": "[format('cosdba-{0}', parameters('name'))]",
                       "location": "[parameters('cosdbaLocation')]",
@@ -448,7 +413,6 @@
                       }
                     },
                     {
-                      "condition": "[variables('isCosdbaSql')]",
                       "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
                       "apiVersion": "2021-10-15",
                       "name": "[format('{0}/{1}', variables('cosmosDb').name, variables('cosmosDb').databaseName)]",
@@ -462,7 +426,6 @@
                       ]
                     },
                     {
-                      "condition": "[variables('isCosdbaSql')]",
                       "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
                       "apiVersion": "2021-10-15",
                       "name": "[format('{0}/{1}', format('{0}/{1}', variables('cosmosDb').name, variables('cosmosDb').databaseName), variables('cosmosDb').containerName)]",
