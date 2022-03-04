@@ -54,6 +54,13 @@ az deployment sub create \
 
 ### via GitHub Actions Workflow
 
+To run this GitHub Actions workflow for resource provisioning and app deployment, you need to store those two secret values:
+
+* `AZURE_CREDENTIALS`: The GitHub Actions workflow uses Azure CLI, which requires login to Azure. This value is used for it.
+* `PA_TOKEN`: For Azure Static Web App deployment, the deployment key needs to be stored to GitHub Secrets. This value is used for it.
+
+Once those two secrets are stored to your GitHub repository, then run the following steps.
+
 ![GitHub Action Workflow Manual Trigger](./images/gha.png)
 
 1. Go to the ["Actions"](https://github.com/davrous/acsauth/actions) tab.
