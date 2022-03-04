@@ -56,8 +56,8 @@ az deployment sub create \
 
 ![GitHub Action Workflow Manual Trigger](./images/gha.png)
 
-1. Go to the ["Actions"](/davrous/acsauth/actions) tab.
-2. Click the ["Resource Provision & App Deploy](/davrous/acsauth/actions/workflows/provision.yaml) tab.
+1. Go to the ["Actions"](https://github.com/davrous/acsauth/actions) tab.
+2. Click the ["Resource Provision & App Deploy](https://github.com/davrous/acsauth/actions/workflows/provision.yaml) tab.
 3. Click the "Run workflow" button.
 4. Enter the resource name into the "Resource name" field.
 5. Select the Cosmos DB location. Default is "Korea Central".
