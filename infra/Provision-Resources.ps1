@@ -1,4 +1,4 @@
-# Provisions resources based on Flags
+# Provisions resources
 Param(
     [string]
     [Parameter(Mandatory=$false)]
@@ -10,11 +10,13 @@ Param(
 
     [string]
     [Parameter(Mandatory=$false)]
-    $Location = "koreacentral",
+    [ValidateSet("Australia Central", "Australia East", "Australia Southeast", "Brazil South", "Canada Central", "Canada East", "Central India", "Central US", "East Asia", "East US", "East US 2", "France Central", "Germany West Central", "Japan East", "Japan West", "Jio India West", "Korea Central", "Korea South", "North Central US", "North Europe", "Norway East", "South Africa North", "South Central US", "South India", "Southeast Asia", "Sweden Central", "Switzerland North", "UAE North", "UK South", "UK West", "West Central US", "West Europe", "West India", "West US", "West US 2", "West US 3")]
+    $Location = "Korea Central",
 
     ### Cosmos DB ###
     [string]
     [Parameter(Mandatory=$false)]
+    [ValidateSet("Standard")]
     $CosmosDbAccountOfferType = "Standard",
 
     [bool]
@@ -28,6 +30,7 @@ Param(
 
     [string]
     [Parameter(Mandatory=$false)]
+    [ValidateSet("Australia Central", "Australia East", "Australia Southeast", "Brazil South", "Canada Central", "Canada East", "Central India", "Central US", "East Asia", "East US", "East US 2", "France Central", "Germany West Central", "Japan East", "Japan West", "Jio India West", "Korea Central", "Korea South", "North Central US", "North Europe", "Norway East", "South Africa North", "South Central US", "South India", "Southeast Asia", "Sweden Central", "Switzerland North", "UAE North", "UK South", "UK West", "West Central US", "West Europe", "West India", "West US", "West US 2", "West US 3")]
     $CosmosDbPrimaryRegion = "Korea Central",
 
     [bool]
@@ -50,8 +53,8 @@ Param(
     ### Static Web App ###
     [string]
     [Parameter(Mandatory=$false)]
-    [ValidateSet("centralus", "eastus2", "eastasia", "westeurope", "westus2")]
-    $StaticWebAppLocation = "eastasia",
+    [ValidateSet("Central US", "East Asia", "East US 2", "West Europe", "West US 2")]
+    $StaticWebAppLocation = "East Asia",
 
     [string]
     [Parameter(Mandatory=$false)]
@@ -72,7 +75,7 @@ Param(
     [string]
     [Parameter(Mandatory=$false)]
     [ValidateSet("ResourceGroup", "Subscription")]
-    $TargetScope = "ResourceGroup",
+    $TargetScope = "Subscription",
     ### Target Scope ###
 
     [switch]
@@ -136,7 +139,7 @@ function Show-Usage {
         -CommunicationServiceDataLocation Data location for Communication Services.
                                           Default is 'Korea'.
 
-        -StaticWebAppLocation             Static Web App location>
+        -StaticWebAppLocation             Static Web App location.
                                           Default is 'eastasia'.
         -StaticWebAppSkuName              Static Web App SKU name.
                                           Default is 'Free'.
@@ -202,34 +205,30 @@ $stringified = $params | ConvertTo-Json -Compress | ConvertTo-Json
 
 # Provision the resources
 if ($WhatIf -eq $true) {
-    Write-Output "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Provisioning resources as a test ..."
-
     if ($TargetScope -eq "ResourceGroup") {
-        az deployment group create -g $ResourceGroupName -n $TargetScope `
+        $result = az deployment group create -g $ResourceGroupName -n $TargetScope `
             -f ./main.bicep `
             -p $stringified `
             -w
     } else {
-        az deployment sub create -l $Location -n $TargetScope `
+        $result = az deployment sub create -l $Location -n $TargetScope `
             -f ./azuredeploy.bicep `
             -p $stringified `
             -w
     }
 
 } else {
-    Write-Output "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Provisioning resources ..."
-
     if ($TargetScope -eq "ResourceGroup") {
-        az deployment group create -g $ResourceGroupName -n $TargetScope `
+        $result = az deployment group create -g $ResourceGroupName -n $TargetScope `
             -f ./main.bicep `
             -p $stringified `
             --verbose
     } else {
-        az deployment sub create -l $Location -n $TargetScope `
+        $result = az deployment sub create -l $Location -n $TargetScope `
             -f ./azuredeploy.bicep `
             -p $stringified `
             --verbose
     }
-
-    Write-Output "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Resources have been provisioned"
 }
+
+$result

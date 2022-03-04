@@ -2,6 +2,9 @@ param name string
 
 // Cosmos DB
 param cosdbaLocation string = resourceGroup().location
+@allowed([
+    'Standard'
+])
 param cosdbaAccountOfferType string = 'Standard'
 param cosdbaAutomaticFailover bool = true
 @allowed([
@@ -41,14 +44,13 @@ param acsvcDataLocation string = 'Korea'
 
 // Static Web App
 @allowed([
-    'centralus'
-    'eastus2'
-    'eastasia'
-    'westeurope'
-    'westus2'
+    'Central US'
+    'East Asia'
+    'East US 2'
+    'West Europe'
+    'West US 2'
 ])
-param sttappLocation string = 'eastasia'
-
+param sttappLocation string = 'East Asia'
 param sttappSkuName string = 'Free'
 param sttappAllowConfigFileUpdates bool = true
 @allowed([

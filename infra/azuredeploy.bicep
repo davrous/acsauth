@@ -1,9 +1,50 @@
 targetScope = 'subscription'
 
 param name string
-param location string = 'koreacentral'
+@allowed([
+    'Australia Central'
+    'Australia East'
+    'Australia Southeast'
+    'Brazil South'
+    'Canada Central'
+    'Canada East'
+    'Central India'
+    'Central US'
+    'East Asia'
+    'East US'
+    'East US 2'
+    'France Central'
+    'Germany West Central'
+    'Japan East'
+    'Japan West'
+    'Jio India West'
+    'Korea Central'
+    'Korea South'
+    'North Central US'
+    'North Europe'
+    'Norway East'
+    'South Africa North'
+    'South Central US'
+    'South India'
+    'Southeast Asia'
+    'Sweden Central'
+    'Switzerland North'
+    'UAE North'
+    'UK South'
+    'UK West'
+    'West Central US'
+    'West Europe'
+    'West India'
+    'West US'
+    'West US 2'
+    'West US 3'
+])
+param location string = 'Korea Central'
 
 // Cosmos DB
+@allowed([
+    'Standard'
+])
 param cosdbaAccountOfferType string = 'Standard'
 param cosdbaAutomaticFailover bool = true
 @allowed([
@@ -14,7 +55,45 @@ param cosdbaAutomaticFailover bool = true
     'Eventual'
 ])
 param cosdbaConsistencyLevel string = 'Session'
-param cosdbaPrimaryRegion string = 'koreacentral'
+@allowed([
+    'Australia Central'
+    'Australia East'
+    'Australia Southeast'
+    'Brazil South'
+    'Canada Central'
+    'Canada East'
+    'Central India'
+    'Central US'
+    'East Asia'
+    'East US'
+    'East US 2'
+    'France Central'
+    'Germany West Central'
+    'Japan East'
+    'Japan West'
+    'Jio India West'
+    'Korea Central'
+    'Korea South'
+    'North Central US'
+    'North Europe'
+    'Norway East'
+    'South Africa North'
+    'South Central US'
+    'South India'
+    'Southeast Asia'
+    'Sweden Central'
+    'Switzerland North'
+    'UAE North'
+    'UK South'
+    'UK West'
+    'West Central US'
+    'West Europe'
+    'West India'
+    'West US'
+    'West US 2'
+    'West US 3'
+])
+param cosdbaPrimaryRegion string = 'Korea Central'
 param cosdbaEnableServerless bool = true
 @allowed([
     'Local'
@@ -43,14 +122,13 @@ param acsvcDataLocation string = 'Korea'
 
 // Static Web App
 @allowed([
-    'centralus'
-    'eastus2'
-    'eastasia'
-    'westeurope'
-    'westus2'
+    'Central US'
+    'East Asia'
+    'East US 2'
+    'West Europe'
+    'West US 2'
 ])
-param sttappLocation string = 'eastasia'
-
+param sttappLocation string = 'East Asia'
 param sttappSkuName string = 'Free'
 param sttappAllowConfigFileUpdates bool = true
 @allowed([

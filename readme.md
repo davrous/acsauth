@@ -27,8 +27,7 @@ $appLocation = "<static_app_location>"
     -Location $location `
     -CosmosDbPrimaryRegion $location `
     -CommunicationServiceDataLocation $dataLocation `
-    -StaticWebAppLocation $appLocation `
-    -TargetScope Subscription
+    -StaticWebAppLocation $appLocation
 ```
 
 
@@ -53,7 +52,25 @@ az deployment sub create \
 ```
 
 
-## TO-DO
+### via GitHub Actions Workflow
 
-* GitHub Actions workflow integration
-* devcontainer integration
+To run this GitHub Actions workflow for resource provisioning and app deployment, you need to store those two secret values:
+
+* `AZURE_CREDENTIALS`: The GitHub Actions workflow uses Azure CLI, which requires login to Azure. This value is used for it.
+* `PA_TOKEN`: For Azure Static Web App deployment, the deployment key needs to be stored to GitHub Secrets. This value is used for it.
+
+Once those two secrets are stored to your GitHub repository, then run the following steps.
+
+![GitHub Action Workflow Manual Trigger](./images/gha.png)
+
+1. Go to the ["Actions"](https://github.com/davrous/acsauth/actions) tab.
+2. Click the ["Resource Provision & App Deploy](https://github.com/davrous/acsauth/actions/workflows/provision.yaml) tab.
+3. Click the "Run workflow" button.
+4. Enter the resource name into the "Resource name" field.
+5. Select the Cosmos DB location. Default is "Korea Central".
+6. Select the Azure Communication Services data location. Default is "Korea".
+7. Select the Static Web App location. Default is "East Asia".
+8. Click the "Run workflow" button.
+
+Once completed, you will see the Azure Static Web App is up and running.
+
