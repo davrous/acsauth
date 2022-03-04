@@ -56,10 +56,9 @@ jobs:
           -TargetScope Subscription
 
         $provisioned = $result | ConvertFrom-Json
+        $deploymentKey = $provisioned.properties.outputs.sttappDeploymentKey.value
 
-        echo $provisioned.properties.outputs.sttappDeploymentKey.value
-
-        echo "::set-output name=sttapp_deploymentkey::$provisioned.properties.outputs.sttappDeploymentKey.value"
+        echo "::set-output name=sttapp_deploymentkey::$deploymentKey"
 
     - name: Update GitHub repository secrets
       uses: gliech/create-github-secret-action@v1
