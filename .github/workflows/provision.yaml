@@ -93,14 +93,16 @@ jobs:
       pa_token: ${{ secrets.PA_TOKEN }}
       az_credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-  call_app_deploy:
+  call_workflow_dispatch:
     needs: call_resource_provisioning
-    uses: justinyoo/acsauth/.github/workflows/app-deploy.yaml@main
-    with:
-      job_name: 'Deploy Static Web App'
-      app_location: 'src'
-      api_location: 'api'
-      output_location: ''
-    secrets:
-      gh_token: ${{ secrets.GITHUB_TOKEN }}
-      aswa_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}'
+    name: 'Deploy Static Web App'
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Invoke workflow with inputs
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: app-deploy-dispatch.yaml
+        token: ${{ secrets.PA_TOKEN }}
+        inputs: '{ "jobName": "Deploy Static Web App", "appLocation": "src", "apiLocation": "api", "outputLocation": "" }'
