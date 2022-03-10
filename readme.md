@@ -1,18 +1,28 @@
-# Vanilla JavaScript App
+# Azure Communication Services Quick Starter
 
+[Azure Communication Services (ACS)](https://azure.microsoft.com/en-us/services/communication-services) is a set of rich communication APIs, video APIs, and SMS APIs for deploying your applications across any device, on any platform. If you’re looking on enabling chat, audio/video conferencing, phone calls or SMS inside an existing app, you should have a look to this service. 
 
-[Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/overview) allows you to easily build JavaScript apps in minutes. Use this repo with the [quickstart](https://docs.microsoft.com/azure/static-web-apps/getting-started?tabs=vanilla-javascript) to build and customize a new static site.
+This repo is used as a starter for a _very basic_ HTML web application using no front-end frameworks. It shows how to map an identity provided by a [Static Web App](https://docs.microsoft.com/en-us/azure/static-web-apps/overview) (Github, Microsoft, Twitter or Google) to an ACS identity. You can then deploy this sample is a couple of minutes following the instructions below and share the URL to the web app to do calls to another user using ACS or to join a Microsoft Teams meeting like described in this video: 
 
-This repo is used as a starter for a _very basic_ HTML web application using no front-end frameworks.
+TODO
 
+This repo also contains a more advanced Metaverse demo allowing to call someone in Teams from a VR environment running in the browser like demonstrated in this short video: 
 
-## Getting Started
+[![Watch the video](https://img.youtube.com/vi/Wd4qNeLV_P8/0.jpg)](https://youtu.be/Wd4qNeLV_P8)
+
+## How to deploy the sample in minutes
 
 ### via Azure Portal
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json)
+Simply click on:
 
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json)
+
+In the various regions you'll choose, this will create a dedicated ressource group (named rg-yourname) and will automatically deploy inside it:
+
+- an Azure Communication Services ressource
+- a CosmosDB 
+- a Static Web App
 
 ### via PowerShell
 
