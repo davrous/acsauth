@@ -1,12 +1,12 @@
 # Azure Communication Services Quick Starter
 
-[Azure Communication Services (ACS)](https://azure.microsoft.com/en-us/services/communication-services) is a set of rich communication APIs, video APIs, and SMS APIs for deploying your applications across any device, on any platform. If you’re looking on enabling chat, audio/video conferencing, phone calls or SMS inside an existing app, you should have a look to this service. 
+[Azure Communication Services (ACS)](https://azure.microsoft.com/en-us/services/communication-services) is a set of rich communication APIs, video APIs, and SMS APIs for deploying your applications across any device, on any platform. If you’re looking on enabling **chat**, **audio/video** conferencing, **phone calls** or **SMS** inside an existing app, you should have a look to this service. Please read [our ACS documentation](https://docs.microsoft.com/en-us/azure/communication-services/) to know more. 
 
-This repo is used as a starter for a _very basic_ HTML web application using no front-end frameworks. It shows how to map an identity provided by a [Static Web App](https://docs.microsoft.com/en-us/azure/static-web-apps/overview) (Github, Microsoft, Twitter or Google) to an ACS identity. You can then deploy this sample is a couple of minutes following the instructions below and share the URL to the web app to do calls to another user using ACS or to join a Microsoft Teams meeting like described in this video: 
+This repo is used as a starter for a _very basic_ HTML web application using no front-end frameworks. It shows how to map an identity provided by a [Static Web App](https://docs.microsoft.com/en-us/azure/static-web-apps/overview) (Github, Microsoft, Twitter or Google) to an ACS identity. You can then deploy this sample is a couple of minutes following the instructions below and share the URL to the web app to **do calls to another user using ACS** or to **join a Microsoft Teams meeting** like described in this video: 
 
 [![Watch the video](https://img.youtube.com/vi/Jbf50SL1ceI/0.jpg)](https://youtu.be/Jbf50SL1ceI)
 
-This repo also contains a more advanced Metaverse demo allowing to call someone in Teams from a VR environment running in the browser like demonstrated in this short video: 
+This repo also contains a more advanced **Metaverse demo** allowing to **call someone in Teams from a VR environment** running in the browser like demonstrated in this short video: 
 
 [![Watch the video](https://img.youtube.com/vi/Wd4qNeLV_P8/0.jpg)](https://youtu.be/Wd4qNeLV_P8)
 
@@ -30,9 +30,9 @@ This will copy this repo into your Github account. Simply click on the "**Deploy
 
 In the various regions you'll choose, this will create a dedicated ressource group (named rg-*yourname*) and will automatically deploy inside it:
 
-- an Azure Communication Services ressource
-- a CosmosDB 
-- a Static Web App
+- an [Azure Communication Services](https://docs.microsoft.com/en-us/azure/communication-services/) ressource 
+- a [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/)
+- a [Static Web App](https://docs.microsoft.com/en-us/azure/static-web-apps/) containing an [Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/) that will be already configured to point to the Cosmos DB & ACS connection strings 
 
 ### Step 3 - Grab the Static Web App deployment token from the Azure Portal
 
@@ -55,3 +55,15 @@ Now to be able to run your GitHub Actions workflow to deploy the ACS sample demo
 ![Github secret key for SWA deployment](./images/acsquicktesttemplatebutton007.jpg)
 
 ### Step 5 - Run the Github Actions deployment workflow
+
+You need to run the workflow configured in this repo to deploy the code of the SWA to your Azure subscription. There is various way to do that as the workflow is listening for either push to the main branch or Pull Request.
+
+The easier way: simply **do a fake commit to the readme.md file** and this will trigger the deployment:
+
+Once the workflow succeeded, navigate to the SWA URL that can be found in your Azure Portal:
+
+![Navigating to the URL of the Static Web App from the Azure Portal](./images/acsquicktesttemplatebutton008.jpg)
+
+And you should now be able to run the same demo as shown in this [YouTube video](https://youtu.be/Jbf50SL1ceI).
+
+To know more about those samples, please read this blog article: [AVAILABLE SOON]
