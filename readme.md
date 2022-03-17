@@ -12,75 +12,46 @@ This repo also contains a more advanced Metaverse demo allowing to call someone 
 
 ## How to deploy the sample in minutes
 
-### via Azure Portal
+### Step 1 - copy this repo in your Github repositories
 
-Simply click on:
+First, you need to be logged in on Github and then press on the green "**use this template**" button:
+
+![Use This Template Button](./images/acsquicktesttemplatebutton.jpg)
+
+Then fill the required properties, be sure to make it public and press "**Create repository from template**" button:
+
+![Creating the repo from the template](./images/acsquicktesttemplatebutton002.jpg)
+
+### Step 2 - provision all required resources using the Deploy To Azure button
+
+This will copy this repo into your Github account. Simply click on the "**Deploy To Azure**" button below:
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json)
 
-In the various regions you'll choose, this will create a dedicated ressource group (named rg-yourname) and will automatically deploy inside it:
+In the various regions you'll choose, this will create a dedicated ressource group (named rg-*yourname*) and will automatically deploy inside it:
 
 - an Azure Communication Services ressource
 - a CosmosDB 
 - a Static Web App
 
-### via PowerShell
+### Step 3 - Grab the Static Web App deployment token from the Azure Portal
 
-```powershell
-$resourceName = "<resource_name>"
-$location = "<cosmosdb_resource_location>"
-$dataLocation = "<acs_data_location>"
-$appLocation = "<static_app_location>"
+Once completed, you'll have a similar screen indicating your deployment is complete:
 
-./infra/Provision-Resources.ps1 `
-    -ResourceName $resourceName `
-    -Location $location `
-    -CosmosDbPrimaryRegion $location `
-    -CommunicationServiceDataLocation $dataLocation `
-    -StaticWebAppLocation $appLocation
-```
+![Template deployment completed screen](./images/acsquicktesttemplatebutton004.jpg)
 
+We're almost done! We now need to associate your Github repo with the freshly provisionned Azure Static Web App. For that, open the new resource group just created by clicking on it. It should be named "rg-*yourname*" like in the above screenshot. You'll then see the 3 resources created inside this resource group:
 
-### via Azure CLI
+![3 resources created: a Communication Service, a Cosmos DB & a Static Web App](./images/acsquicktesttemplatebutton005.jpg)
 
-```bash
-resourceName=<resource_name>
-location=<cosmosdb_resource_location>
-dataLocation=<acs_data_location>
-appLocation=<static_app_location>
+Click on the Static Web App named "sttapp-*yourname*" then click on the "**Manage deployment token**" button and copy to the clipboard the secret token.
 
-az deployment sub create \
-    -l $location \
-    -n Subscription \
-    -f ./infra/azuredeploy.bicep \
-    -p name=$resourceName \
-    -p location=$location \
-    -p cosdbaPrimaryRegion=$location \
-    -p acsvcDataLocation=$dataLocation \
-    -p sttappLocation=$appLocation \
-    --verbose
-```
+![Azure SWA deployment token screen](./images/acsquicktesttemplatebutton006.jpg)
 
+### Step 4 - Copy the SWA deployment token as a secret in your Github repo
 
-### via GitHub Actions Workflow
+Now to be able to run your GitHub Actions workflow to deploy the ACS sample demonstrated in the videos, you need to store the SWA deployment token in a secret value named `AZURE_STATIC_WEB_APPS_API_TOKEN`. For that, go into the **Settings** of your Github repo and then navigate to the Secrets->Actions section to create a new secret key.
 
-To run this GitHub Actions workflow for resource provisioning and app deployment, you need to store those two secret values:
+![Github secret key for SWA deployment](./images/acsquicktesttemplatebutton007.jpg)
 
-* `AZURE_CREDENTIALS`: The GitHub Actions workflow uses Azure CLI, which requires login to Azure. This value is used for it.
-* `PA_TOKEN`: For Azure Static Web App deployment, the deployment key needs to be stored to GitHub Secrets. This value is used for it.
-
-Once those two secrets are stored to your GitHub repository, then run the following steps.
-
-![GitHub Action Workflow Manual Trigger](./images/gha.png)
-
-1. Go to the ["Actions"](https://github.com/davrous/acsauth/actions) tab.
-2. Click the ["Resource Provision & App Deploy](https://github.com/davrous/acsauth/actions/workflows/provision.yaml) tab.
-3. Click the "Run workflow" button.
-4. Enter the resource name into the "Resource name" field.
-5. Select the Cosmos DB location. Default is "Korea Central".
-6. Select the Azure Communication Services data location. Default is "Korea".
-7. Select the Static Web App location. Default is "East Asia".
-8. Click the "Run workflow" button.
-
-Once completed, you will see the Azure Static Web App is up and running.
-
+### Step 5 - Run the Github Actions deployment workflow
