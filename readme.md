@@ -71,10 +71,26 @@ And you should now be able to run the same demo as shown in this [YouTube video]
 To know more about those samples, please read this blog article: [AVAILABLE SOON]
 
 ## Concepts used in this sample
+### Azure Communication Services
+- [Identity concept](https://docs.microsoft.com/en-us/azure/communication-services/concepts/identity-model)
+- [Calling concept](https://docs.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/about-call-types)
+- [Teams interoperability concept](https://docs.microsoft.com/en-us/azure/communication-services/concepts/teams-interop)
+- [Quickstart: Create and manage access tokens](https://docs.microsoft.com/en-us/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-javascript)
+- [QuickStart: Add 1:1 video calling to your app](https://docs.microsoft.com/en-us/azure/communication-services/quickstarts/voice-video-calling/get-started-with-video-calling)
+- [Quickstart: Join your calling app to a Teams meeting](https://docs.microsoft.com/en-us/azure/communication-services/quickstarts/voice-video-calling/get-started-teams-interop)
+
+### Azure Static Web App
+- [Authentication and authorization for Azure Static Web Apps](https://docs.microsoft.com/en-us/azure/static-web-apps/authentication-authorization)
+- [Azure Cosmos DB input binding for Azure Functions 2.x and higher](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2-input)
+- [Azure Cosmos DB output binding for Azure Functions 2.x and higher](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2-output)
 
 ## Metaverse demo
 
 ## Going Further
+
+- if you need a more advanced authentication layer, ready for production, have a look to our [Get started with the trusted authentication service hero sample](https://docs.microsoft.com/en-us/azure/communication-services/samples/trusted-auth-sample) documentation. It shows the same concept using Azure Active Directory (AAD) mapping with ACS. 
+- if you need a polished and ready to use UI library on top of the ACS SDK, read our [UI Library Overview](https://docs.microsoft.com/en-us/azure/communication-services/concepts/ui-library/ui-library-overview?pivots=platform-web)
+- this sample shows a great usage for this UI library: [Get started with the calling hero sample](https://docs.microsoft.com/en-us/azure/communication-services/samples/calling-hero-sample)
 
 ## Credits
 
