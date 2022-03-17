@@ -60,6 +60,8 @@ You finally need to run the workflow configured in this repo to deploy the code 
 
 The easier way: simply **do a fake commit to the readme.md file** and this will trigger the deployment:
 
+![Github Actions workflow completed screen](./images/acsquicktesttemplatebutton009.jpg)
+
 Once the workflow succeeded, navigate to the SWA URL that can be found in your Azure Portal:
 
 ![Navigating to the URL of the Static Web App from the Azure Portal](./images/acsquicktesttemplatebutton008.jpg)
