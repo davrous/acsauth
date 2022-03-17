@@ -28,9 +28,9 @@ This will copy this repo into your Github account. Simply click on the "**Deploy
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json)
 
-In the various regions you'll choose, this will create a dedicated ressource group (named rg-*yourname*) and will automatically deploy inside it:
+In the various regions you'll choose, this will create a dedicated resource group (named rg-*yourname*) and will automatically deploy inside it:
 
-- an [Azure Communication Services](https://docs.microsoft.com/en-us/azure/communication-services/) ressource 
+- an [Azure Communication Services](https://docs.microsoft.com/en-us/azure/communication-services/) resource 
 - a [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/)
 - a [Static Web App](https://docs.microsoft.com/en-us/azure/static-web-apps/) containing an [Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/) that will be already configured to point to the Cosmos DB & ACS connection strings 
 
@@ -40,7 +40,7 @@ Once completed, you'll have a similar screen indicating your deployment is compl
 
 ![Template deployment completed screen](./images/acsquicktesttemplatebutton004.jpg)
 
-We're almost done! We now need to associate your Github repo with the freshly provisionned Azure Static Web App. For that, open the new resource group just created by clicking on it. It should be named "rg-*yourname*" like in the above screenshot. You'll then see the 3 resources created inside this resource group:
+We're almost done! We now need to associate your Github repo with the freshly provisioned Azure Static Web App. For that, open the new resource group just created by clicking on it. It should be named "rg-*yourname*" like in the above screenshot. You'll then see the 3 resources created inside this resource group:
 
 ![3 resources created: a Communication Service, a Cosmos DB & a Static Web App](./images/acsquicktesttemplatebutton005.jpg)
 
@@ -85,6 +85,17 @@ To know more about those samples, please read this blog article: [AVAILABLE SOON
 - [Azure Cosmos DB output binding for Azure Functions 2.x and higher](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2-output)
 
 ## Metaverse demo
+Once deployed, the VR / metaverse demo will be available under **/vr.html**
+
+![Screenshot of the Metaverse sample calling someone else in ACS](./images/acsmetaversesample.jpg)
+
+It works the same as the previous demo. You can either call someone using ACS or call someone inside a Microsoft Teams meeting. You can move inside the 3D scene using the arrows key (like a FPS game) or a gamepad controller. If launched in VR, you can use the VR controllers to teleport yourself like a classical VR game. 
+
+*`Note`: it uses a trick to replace on the fly the video feed of the selected webcam by a stream of the WebGL canvas as this scenario is currently not supported out of the box by the ACS SDK. You then need a webcam available on the device that will render the 3D scene.*
+
+To be able to replay as-is the demo showcased in [this YouTube video](https://youtu.be/Wd4qNeLV_P8), you need a WebXR compatible headset & browser. I’ve used my Valve Index inside Microsoft Edge in the demo. 
+
+This demo uses the [Babylon.js WebGL engine](https://www.babylonjs.com) supporting WebXR out of the box. 
 
 ## Going Further
 
