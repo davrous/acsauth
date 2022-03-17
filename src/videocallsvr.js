@@ -515,7 +515,7 @@ function makeVideoTexture(videoElement) {
     var videoTexture = new BABYLON.VideoTexture("vidtex",videoElement, scene);
     videoPlaneMat.diffuseTexture = videoTexture;
     videoPlaneMat.roughness = 1;
-    videoPlaneMat.emissiveColor = new BABYLON.Color3.White();
+    videoPlaneMat.emissiveColor = BABYLON.Color3.White();
     videoOnControllerPlane.material = videoPlaneMat;
     videoFullPlane.material = videoPlaneMat;
 }
@@ -570,7 +570,7 @@ let createScene = function() {
            	const teamsPlaneMat = new BABYLON.StandardMaterial("");
             teamsPlaneMat.opacityTexture = new BABYLON.Texture("https://david.blob.core.windows.net/acs/MSTeamsLogo.png");
             teamsPlaneMat.diffuseTexture = new BABYLON.Texture("https://david.blob.core.windows.net/acs/MSTeamsLogo.png");
-            teamsPlaneMat.emissiveColor = new BABYLON.Color3.White();
+            teamsPlaneMat.emissiveColor = BABYLON.Color3.White();
             
             teamsPlane = BABYLON.MeshBuilder.CreatePlane("teamsPlane", {size: 1.5, sideOrientation: BABYLON.Mesh.DOUBLESIDE});
             teamsPlane.position = new BABYLON.Vector3(-2.82, 2.16, 4.44);
