@@ -12,6 +12,10 @@ This repo also contains a more advanced **Metaverse demo** allowing to **call so
 
 ## How to deploy the sample in minutes
 
+You've got 2 options:
+- Follow the steps just below
+- Or watch this step-by-step video: https://youtu.be/Booa7ZrW0og
+
 ### Step 1 - copy this repo in your Github repositories
 
 First, you need to be logged in on Github and then press on the green "**use this template**" button:
@@ -67,6 +71,8 @@ Once the workflow succeeded, navigate to the SWA URL that can be found in your A
 ![Navigating to the URL of the Static Web App from the Azure Portal](./images/acsquicktesttemplatebutton008.jpg)
 
 And you should now be able to run the same demo as shown in this [YouTube video](https://youtu.be/Jbf50SL1ceI).
+
+Still lost? Please check [this step-by-step tutorial video](https://youtu.be/Booa7ZrW0og).
 
 To know more about those samples, please read this blog article: [AVAILABLE SOON]
 
