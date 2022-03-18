@@ -57,7 +57,7 @@
     },
     "acsvcDataLocation": {
       "type": "string",
-      "defaultValue": "Korea",
+      "defaultValue": "United States",
       "allowedValues": [
         "Africa",
         "Asia Pacific",
@@ -76,7 +76,7 @@
     },
     "sttappLocation": {
       "type": "string",
-      "defaultValue": "East Asia",
+      "defaultValue": "Central US",
       "allowedValues": [
         "Central US",
         "East Asia",
@@ -339,7 +339,7 @@
             },
             "acsvcDataLocation": {
               "type": "string",
-              "defaultValue": "Korea",
+              "defaultValue": "United States",
               "allowedValues": [
                 "Africa",
                 "Asia Pacific",
@@ -440,7 +440,7 @@
             },
             "sttappLocation": {
               "type": "string",
-              "defaultValue": "East Asia",
+              "defaultValue": "Central US",
               "allowedValues": [
                 "Central US",
                 "East Asia",
