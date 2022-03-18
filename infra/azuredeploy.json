@@ -152,7 +152,7 @@
     },
     "sttappLocation": {
       "type": "string",
-      "defaultValue": "West US",
+      "defaultValue": "Central US",
       "allowedValues": [
         "Central US",
         "East Asia",
@@ -314,7 +314,7 @@
             },
             "sttappLocation": {
               "type": "string",
-              "defaultValue": "West US",
+              "defaultValue": "Central US",
               "allowedValues": [
                 "Central US",
                 "East Asia",
