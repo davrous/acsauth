@@ -15,7 +15,7 @@ param name string
     'United Kingdom'
     'United States'
 ])
-param acsvcDataLocation string = 'Korea'
+param acsvcDataLocation string = 'United States'
 
 
 var commService = {

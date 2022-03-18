@@ -7,7 +7,7 @@ param name string
     'West Europe'
     'West US 2'
 ])
-param sttappLocation string = 'East Asia'
+param sttappLocation string = 'Central US'
 
 @allowed([
     'Free'

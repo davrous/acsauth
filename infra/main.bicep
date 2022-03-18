@@ -40,7 +40,7 @@ param cosdbaBackupStorageRedundancy string = 'Local'
     'United Kingdom'
     'United States'
 ])
-param acsvcDataLocation string = 'Korea'
+param acsvcDataLocation string = 'United States'
 
 // Static Web App
 @allowed([
@@ -50,7 +50,7 @@ param acsvcDataLocation string = 'Korea'
     'West Europe'
     'West US 2'
 ])
-param sttappLocation string = 'East Asia'
+param sttappLocation string = 'Central US'
 param sttappSkuName string = 'Free'
 param sttappAllowConfigFileUpdates bool = true
 @allowed([

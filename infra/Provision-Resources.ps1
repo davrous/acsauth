@@ -11,7 +11,7 @@ Param(
     [string]
     [Parameter(Mandatory=$false)]
     [ValidateSet("Australia Central", "Australia East", "Australia Southeast", "Brazil South", "Canada Central", "Canada East", "Central India", "Central US", "East Asia", "East US", "East US 2", "France Central", "Germany West Central", "Japan East", "Japan West", "Jio India West", "Korea Central", "Korea South", "North Central US", "North Europe", "Norway East", "South Africa North", "South Central US", "South India", "Southeast Asia", "Sweden Central", "Switzerland North", "UAE North", "UK South", "UK West", "West Central US", "West Europe", "West India", "West US", "West US 2", "West US 3")]
-    $Location = "Korea Central",
+    $Location = "Central US",
 
     ### Cosmos DB ###
     [string]
@@ -31,7 +31,7 @@ Param(
     [string]
     [Parameter(Mandatory=$false)]
     [ValidateSet("Australia Central", "Australia East", "Australia Southeast", "Brazil South", "Canada Central", "Canada East", "Central India", "Central US", "East Asia", "East US", "East US 2", "France Central", "Germany West Central", "Japan East", "Japan West", "Jio India West", "Korea Central", "Korea South", "North Central US", "North Europe", "Norway East", "South Africa North", "South Central US", "South India", "Southeast Asia", "Sweden Central", "Switzerland North", "UAE North", "UK South", "UK West", "West Central US", "West Europe", "West India", "West US", "West US 2", "West US 3")]
-    $CosmosDbPrimaryRegion = "Korea Central",
+    $CosmosDbPrimaryRegion = "Central US",
 
     [bool]
     [Parameter(Mandatory=$false)]
@@ -47,14 +47,14 @@ Param(
     [string]
     [Parameter(Mandatory=$false)]
     [ValidateSet("Africa", "Asia Pacific", "Australia", "Brazil", "Canada", "Europe", "France", "Germany", "India", "Japan", "Korea", "United Kingdom", "United States")]
-    $CommunicationServiceDataLocation = "Korea",
+    $CommunicationServiceDataLocation = "United States",
     ### Communication Services ###
 
     ### Static Web App ###
     [string]
     [Parameter(Mandatory=$false)]
     [ValidateSet("Central US", "East Asia", "East US 2", "West Europe", "West US 2")]
-    $StaticWebAppLocation = "East Asia",
+    $StaticWebAppLocation = "Central US",
 
     [string]
     [Parameter(Mandatory=$false)]

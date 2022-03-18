@@ -14,7 +14,7 @@
     },
     "location": {
       "type": "string",
-      "defaultValue": "Korea Central",
+      "defaultValue": "Central US",
       "allowedValues": [
         "Australia Central",
         "Australia East",
@@ -78,7 +78,7 @@
     },
     "cosdbaPrimaryRegion": {
       "type": "string",
-      "defaultValue": "Korea Central",
+      "defaultValue": "Central US",
       "allowedValues": [
         "Australia Central",
         "Australia East",
@@ -133,7 +133,7 @@
     },
     "acsvcDataLocation": {
       "type": "string",
-      "defaultValue": "Korea",
+      "defaultValue": "United States",
       "allowedValues": [
         "Africa",
         "Asia Pacific",
@@ -152,7 +152,7 @@
     },
     "sttappLocation": {
       "type": "string",
-      "defaultValue": "East Asia",
+      "defaultValue": "Central US",
       "allowedValues": [
         "Central US",
         "East Asia",
@@ -295,7 +295,7 @@
             },
             "acsvcDataLocation": {
               "type": "string",
-              "defaultValue": "Korea",
+              "defaultValue": "United States",
               "allowedValues": [
                 "Africa",
                 "Asia Pacific",
@@ -314,7 +314,7 @@
             },
             "sttappLocation": {
               "type": "string",
-              "defaultValue": "East Asia",
+              "defaultValue": "Central US",
               "allowedValues": [
                 "Central US",
                 "East Asia",
@@ -577,7 +577,7 @@
                     },
                     "acsvcDataLocation": {
                       "type": "string",
-                      "defaultValue": "Korea",
+                      "defaultValue": "United States",
                       "allowedValues": [
                         "Africa",
                         "Asia Pacific",
@@ -678,7 +678,7 @@
                     },
                     "sttappLocation": {
                       "type": "string",
-                      "defaultValue": "East Asia",
+                      "defaultValue": "Central US",
                       "allowedValues": [
                         "Central US",
                         "East Asia",

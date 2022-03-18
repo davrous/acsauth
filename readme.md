@@ -26,12 +26,12 @@ Then fill the required properties, be sure to make it public and press "**Create
 
 This will copy this repo into your Github account. Simply click on the "**Deploy To Azure**" button below:
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json)
+<a target="_blank" href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavrous%2Facsauth%2Fmain%2Finfra%2Fazuredeploy.json" rel="nofollow"><img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true" alt="Deploy To Azure" style="max-width: 100%;"></a>
 
 In the various regions you'll choose, this will create a dedicated resource group (named rg-*yourname*) and will automatically deploy inside it:
 
 - an [Azure Communication Services](https://docs.microsoft.com/en-us/azure/communication-services/) resource 
-- a [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/)
+- a [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/) that will store the mapping records of social accounts with ACS identities & tokens
 - a [Static Web App](https://docs.microsoft.com/en-us/azure/static-web-apps/) containing an [Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/) that will be already configured to point to the Cosmos DB & ACS connection strings 
 
 ### Step 3 - Grab the Static Web App deployment token from the Azure Portal
@@ -48,9 +48,9 @@ Click on the Static Web App named "sttapp-*yourname*" then click on the "**Manag
 
 ![Azure SWA deployment token screen](./images/acsquicktesttemplatebutton006.jpg)
 
-### Step 4 - Copy the SWA deployment token as a secret in your Github repo
+### Step 4 - Copy the Static Web App deployment token as a secret in your Github repo
 
-Now to be able to run your GitHub Actions workflow to deploy the ACS sample demonstrated in the videos, you need to store the SWA deployment token in a secret value named `AZURE_STATIC_WEB_APPS_API_TOKEN`. For that, go into the **Settings** of your Github repo and then navigate to the **Secrets->Actions** section to create a **New repository secret** key.
+Now to be able to run your GitHub Actions workflow to deploy the ACS sample demonstrated in the videos, you need to store the Static Web App deployment token in a secret value named `AZURE_STATIC_WEB_APPS_API_TOKEN`. For that, go into the **Settings** of your Github repo and then navigate to the **Secrets->Actions** section to create a **New repository secret** key.
 
 ![Github secret key for SWA deployment](./images/acsquicktesttemplatebutton007.jpg)
 
