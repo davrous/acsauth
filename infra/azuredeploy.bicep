@@ -39,7 +39,7 @@ param name string
     'West US 2'
     'West US 3'
 ])
-param location string = 'Central US'
+param location string = 'West US'
 
 // Cosmos DB
 @allowed([
@@ -93,7 +93,7 @@ param cosdbaConsistencyLevel string = 'Session'
     'West US 2'
     'West US 3'
 ])
-param cosdbaPrimaryRegion string = 'Central US'
+param cosdbaPrimaryRegion string = 'West US'
 param cosdbaEnableServerless bool = true
 @allowed([
     'Local'

@@ -14,7 +14,7 @@
     },
     "location": {
       "type": "string",
-      "defaultValue": "Central US",
+      "defaultValue": "West US",
       "allowedValues": [
         "Australia Central",
         "Australia East",
@@ -78,7 +78,7 @@
     },
     "cosdbaPrimaryRegion": {
       "type": "string",
-      "defaultValue": "Central US",
+      "defaultValue": "West US",
       "allowedValues": [
         "Australia Central",
         "Australia East",
@@ -152,7 +152,7 @@
     },
     "sttappLocation": {
       "type": "string",
-      "defaultValue": "Central US",
+      "defaultValue": "West US",
       "allowedValues": [
         "Central US",
         "East Asia",
@@ -314,7 +314,7 @@
             },
             "sttappLocation": {
               "type": "string",
-              "defaultValue": "Central US",
+              "defaultValue": "West US",
               "allowedValues": [
                 "Central US",
                 "East Asia",
