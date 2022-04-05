@@ -109,6 +109,15 @@ This demo uses the [Babylon.js WebGL engine](https://www.babylonjs.com) supporti
 - if you need a polished and ready to use UI library on top of the ACS SDK, read our [UI Library Overview](https://docs.microsoft.com/en-us/azure/communication-services/concepts/ui-library/ui-library-overview?pivots=platform-web)
 - this sample shows a great usage for this UI library: [Get started with the calling hero sample](https://docs.microsoft.com/en-us/azure/communication-services/samples/calling-hero-sample)
 
+## Running it on your dev machine
+
+If you clone the repo on your developer machine, here are the steps to make it works:
+
+- ```npm install``` -> this will install Webpack, some Azure Communication Services modules & the Azure Static Web App simulator & CLI
+- Rename *local.settings.sample.json* to *local.settings.json* and fill the 2 properties with the Azure Communication Services & CosmosDB connection strings you'll find in the Azure Portal
+- ```npm start``` -> this will start the Static Web App on http://localhost:4280 
+- ```npm run build``` -> if you'd like to modify the code of *videocalls.js*, *videocallsvr.js* & *testacs.js* and bundle them with Webpack
+
 ## Credits
 
 I'd like to thank [Justin Yoo](https://twitter.com/justinchronicle) for his precious help on building the deployment scripts & logic of this repo. If you're interested in building similar deployments from your repo, Justin has written an awesome technical article about the job he's done: [Azure Apps Autopilot](https://dev.to/azure/azure-apps-autopilot-2ag8). 

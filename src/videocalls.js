@@ -105,7 +105,12 @@ async function getUserAcsId(userEmail) {
             authUserEmail=authenticatedUser.userDetails + "@" + authenticatedUser.identityProvider;
         }
         var ACSUserQuery = await fetch(`/api/users/`+ authUserEmail);
-        ACSUser = await ACSUserQuery.json();
+        try {
+            ACSUser = await ACSUserQuery.json();
+        }
+        catch {
+            alert('Error while trying to call Azure Function API, please check your local.settings.json file contains valid ACS & CosmosDB connection strings.')
+        }
         console.log("ACS User Token: " + ACSUser.userToken);
         console.log("Valid until: " + ACSUser.expiresOn);
         document.querySelector('#acs_user_id').textContent = ACSUser.userId;
